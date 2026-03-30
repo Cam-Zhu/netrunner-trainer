@@ -195,10 +195,19 @@ function renderHand() {
     const div = document.createElement('div');
     div.className = 'card-chip' + (state.selectedCard === card ? ' selected' : '');
     div.style.animationDelay = `${seen.size * 40}ms`;
+    const imgUrl = (typeof CARD_IMAGES !== 'undefined') ? CARD_IMAGES[card] : null;
     div.innerHTML = `
-      <div class="card-name">${escHtml(card)}</div>
-      <div class="card-type">${guessType(card)}</div>
-      ${counts[card] > 1 ? `<div class="card-dupe">${counts[card]}× in hand</div>` : ''}
+      <div class="card-art">
+        ${imgUrl
+          ? `<img src="${imgUrl}" alt="${escHtml(card)}" loading="lazy" />`
+          : `<div class="card-art--missing"><span>${escHtml(card.slice(0,2).toUpperCase())}</span></div>`
+        }
+      </div>
+      <div class="card-info">
+        <div class="card-name">${escHtml(card)}</div>
+        <div class="card-type">${guessType(card)}</div>
+        ${counts[card] > 1 ? `<div class="card-dupe">${counts[card]}× in hand</div>` : ''}
+      </div>
     `;
     div.addEventListener('click', () => selectCard(card));
     els.handGrid.appendChild(div);
