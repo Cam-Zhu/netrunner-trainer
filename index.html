@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Netrunner Deck Trainer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="scanline"></div>
+
+  <header>
+    <div class="logo">
+      <span class="logo-bracket">[</span>RUN<span class="logo-accent">_</span>TRAINER<span class="logo-bracket">]</span>
+    </div>
+    <div class="header-sub">Netrunner deck coach &mdash; District Championship prep</div>
+  </header>
+
+  <main>
+    <!-- Deck selector + mode controls -->
+    <section class="controls-bar">
+      <div class="control-group">
+        <label class="ctrl-label">Deck</label>
+        <div class="toggle-group" id="deck-toggle">
+          <button class="toggle-btn active" data-value="corp">Corp</button>
+          <button class="toggle-btn" data-value="runner">Runner</button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="ctrl-label">Mode</label>
+        <div class="toggle-group" id="mode-toggle">
+          <button class="toggle-btn active" data-value="opening">Opening</button>
+          <button class="toggle-btn" data-value="card">Card focus</button>
+          <button class="toggle-btn" data-value="situation">Mid-game</button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="ctrl-label">Hand size <span id="hand-size-out">5</span></label>
+        <input type="range" min="3" max="7" value="5" id="hand-size" />
+      </div>
+    </section>
+
+    <!-- Hand area -->
+    <section class="hand-section">
+      <div class="hand-meta">
+        <span id="hand-status">No hand drawn yet</span>
+        <div class="hand-actions">
+          <button class="btn btn-ghost" id="mulligan-btn" disabled>Mulligan</button>
+          <button class="btn btn-primary" id="draw-btn">Draw hand</button>
+        </div>
+      </div>
+      <div class="hand-grid" id="hand-grid">
+        <div class="empty-hand">
+          <span class="empty-icon">&#9632;</span>
+          <span>Draw a hand to begin</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Coach panel -->
+    <section class="coach-panel">
+      <div class="coach-header">
+        <span class="coach-label">// COACH OUTPUT</span>
+        <button class="btn btn-ghost btn-sm" id="analyse-btn" disabled>Analyse full hand</button>
+      </div>
+      <div class="coach-body" id="coach-body">
+        <span class="coach-placeholder">Select a card or analyse your hand &mdash; coaching will appear here.</span>
+      </div>
+    </section>
+
+    <!-- Deck editors -->
+    <section class="deck-editors">
+      <details class="deck-editor" id="editor-corp">
+        <summary>Edit Corp deck</summary>
+        <div class="editor-inner">
+          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>.</p>
+          <textarea id="corp-input" spellcheck="false"></textarea>
+          <div class="editor-footer">
+            <span class="editor-status" id="corp-status"></span>
+            <button class="btn btn-primary btn-sm" onclick="saveDeck('corp')">Save</button>
+          </div>
+        </div>
+      </details>
+      <details class="deck-editor" id="editor-runner">
+        <summary>Edit Runner deck</summary>
+        <div class="editor-inner">
+          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>.</p>
+          <textarea id="runner-input" spellcheck="false"></textarea>
+          <div class="editor-footer">
+            <span class="editor-status" id="runner-status"></span>
+            <button class="btn btn-primary btn-sm" onclick="saveDeck('runner')">Save</button>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
