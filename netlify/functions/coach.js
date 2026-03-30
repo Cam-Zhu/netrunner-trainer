@@ -31,6 +31,7 @@ export default async (req, context) => {
     body: JSON.stringify({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1000,
+      ...(body.system ? { system: body.system } : {}),
       messages: body.messages,
     }),
   });
