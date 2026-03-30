@@ -196,16 +196,19 @@ function renderHand() {
     div.className = 'card-chip' + (state.selectedCard === card ? ' selected' : '');
     div.style.animationDelay = `${seen.size * 40}ms`;
     const imgUrl = (typeof CARD_IMAGES !== 'undefined') ? CARD_IMAGES[card] : null;
+    const cardType = guessType(card);
+    const isIce = cardType === 'Ice / Icebreaker' && state.activeDeck === 'corp';
+    const artPosition = isIce ? 'bottom center' : 'top center';
     div.innerHTML = `
       <div class="card-art">
         ${imgUrl
-          ? `<img src="${imgUrl}" alt="${escHtml(card)}" loading="lazy" />`
+          ? `<img src="${imgUrl}" alt="${escHtml(card)}" loading="lazy" style="object-position: ${artPosition};" />`
           : `<div class="card-art--missing"><span>${escHtml(card.slice(0,2).toUpperCase())}</span></div>`
         }
       </div>
       <div class="card-info">
         <div class="card-name">${escHtml(card)}</div>
-        <div class="card-type">${guessType(card)}</div>
+        <div class="card-type">${cardType}</div>
         ${counts[card] > 1 ? `<div class="card-dupe">${counts[card]}× in hand</div>` : ''}
       </div>
     `;
