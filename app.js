@@ -240,38 +240,90 @@ function analyseHand() {
   callCoach(prompt);
 }
 
+// ─── Card context builder ─────────────────────────────────────────────────────
+
+// Returns a compact oracle text block for a list of card names, sourced from
+// CARD_DATA (card-data.js). Gracefully skips cards not in the map.
+function buildCardContext(cardNames) {
+  if (typeof CARD_DATA === 'undefined') return '';
+  const lines = [];
+  const seen = new Set();
+  for (const name of cardNames) {
+    if (seen.has(name)) continue;
+    seen.add(name);
+    const d = CARD_DATA[name];
+    if (!d) continue;
+
+    const parts = [];
+    parts.push(`[${d.type}${d.subtypes.length ? ' — ' + d.subtypes.join(', ') : ''}]`);
+    if (d.cost      != null) parts.push(`Cost: ${d.cost}`);
+    if (d.strength  != null) parts.push(`Str: ${d.strength}`);
+    if (d.mu_cost   != null) parts.push(`MU: ${d.mu_cost}`);
+    if (d.trash_cost != null) parts.push(`Trash: ${d.trash_cost}`);
+    if (d.agenda_points != null) parts.push(`Agenda: ${d.advancement}/${d.agenda_points}`);
+    if (d.influence != null && d.influence > 0) parts.push(`Inf: ${d.influence}`);
+
+    lines.push(`${name} ${parts.join(' | ')}${d.text ? '\n  "' + d.text + '"' : ''}`);
+  }
+  return lines.length ? '\nCARD ORACLE TEXT:\n' + lines.join('\n') + '\n' : '';
+}
+
+// ─── System prompt ────────────────────────────────────────────────────────────
+
+const SYSTEM_PROMPT = `You are an expert Android: Netrunner coach helping a player prepare for competitive play in the Standard format (Elevation card pool, 2026 season).
+
+Key rules to apply precisely:
+- Corp scores agendas from their hand by installing and fully advancing them (costs 1 click + credits to advance). Scoring costs 1 click.
+- Runner accesses cards by making successful runs. Running costs 1 click.
+- Each player has 4 clicks per turn unless modified.
+- ICE is installed unrezzed. Rezzing costs credits. The Runner encounters ICE when running.
+- Subroutines on unbroken ICE fire. Icebreakers break subroutines by spending credits.
+- Cards with [->] are subroutines on ICE.
+- "Recurring credits" refill at the start of each turn.
+- Fermenter gains 1 virus counter per turn; trash it to gain 2 credits per counter.
+- Botulus and Chisel use virus counters to break/destroy ICE.
+- Hoshiko Shiro is banned in Standard for the 2026 season.
+
+Faction context:
+- Weyland Consortium: glacier scoring, big taxing ICE, economic operations, meat damage threats.
+- Anarch (Loup): virus-based ICE destruction, aggressive runs, tempo through destruction.
+
+Be precise about costs, timing, and card text. If oracle text is provided for a card, treat it as authoritative. Never invent card abilities. Be direct and concise.`;
+
 // ─── Prompt builders ──────────────────────────────────────────────────────────
 
 function buildCardPrompt(card, deckLabel) {
   const handList = state.hand.join(', ');
-  return `You are a competitive Android: Netrunner coach helping a player prepare for a District Championship. They are playing ${deckLabel}.
+  const context  = buildCardContext(state.hand);
+  return `Player is preparing for a District Championship with ${deckLabel}.
 
 They selected: "${card}"
 Full hand: ${handList}
-
-Give tight, practical coaching on this card:
-- What it does (1 sentence, assume the player is still learning)
+${context}
+Give tight coaching on this card:
+- What it does (1 sentence)
 - When to play it in this hand — turn 1, later, or hold?
 - Any sequencing tip with the other cards visible
 - One thing to watch out for
 
-Max 80 words. Use Netrunner terminology. Be direct — no fluff.`;
+Max 80 words. Be direct.`;
 }
 
 function buildHandPrompt(deckLabel) {
   const handList = state.hand.join(', ');
+  const context  = buildCardContext(state.hand);
   const modeInstructions = {
-    opening: `Assess this opening hand for ${deckLabel}. Should they keep or mulligan, and why? Then describe exactly what to do on turns 1, 2, and 3. Be specific — name the cards and the order.`,
-    card:    `Briefly explain what each card in this hand does and how they interact. Identify the 1-2 priority plays and why.`,
-    situation: `Invent a plausible mid-game board state where this hand's cards are relevant. Describe the position in 1-2 sentences, then give the correct line of play and the key decision point.`,
+    opening:   `Assess this opening hand for ${deckLabel}. Should they keep or mulligan, and why? Then describe exactly what to do on turns 1, 2, and 3. Be specific — name the cards and the order.`,
+    card:      `Explain what each card in this hand does and how they interact. Identify the 1-2 priority plays and why.`,
+    situation: `Invent a plausible mid-game board state where these cards are relevant. Describe the position in 1-2 sentences, then give the correct line of play and the key decision point.`,
   };
-  return `You are a competitive Android: Netrunner coach helping a player prepare for a District Championship. They are playing ${deckLabel}.
+  return `Player is preparing for a District Championship with ${deckLabel}.
 
 Hand: ${handList}
-
+${context}
 ${modeInstructions[state.mode]}
 
-Max 120 words. Use Netrunner terminology. No fluff.`;
+Max 120 words. Be direct.`;
 }
 
 // ─── Coach API call ───────────────────────────────────────────────────────────
@@ -285,7 +337,10 @@ async function callCoach(prompt) {
     const res = await fetch('/api/coach', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] }),
+      body: JSON.stringify({
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: prompt }],
+      }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
