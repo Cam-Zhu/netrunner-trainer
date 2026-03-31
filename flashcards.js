@@ -16,6 +16,10 @@ document.querySelectorAll('.page-tab').forEach(tab => {
     if (page === 'mechanics') window.initMechanicsOnce();
     // Scroll active tab into view on mobile
     tab.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    // Plausible analytics
+    if (typeof window.plausible !== 'undefined') {
+      window.plausible('Tab switch', { props: { tab: page } });
+    }
   });
 });
 
