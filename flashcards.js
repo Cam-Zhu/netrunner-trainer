@@ -14,6 +14,8 @@ document.querySelectorAll('.page-tab').forEach(tab => {
     if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
     if (page === 'challenge') ch.renderLevelMap();
     if (page === 'mechanics') window.initMechanicsOnce();
+    // Scroll active tab into view on mobile
+    tab.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   });
 });
 
