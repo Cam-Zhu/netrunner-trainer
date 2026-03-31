@@ -23,7 +23,8 @@
   <nav class="page-nav">
     <button class="page-tab active" data-page="decks">My decks</button>
     <button class="page-tab" data-page="trainer">Hand trainer</button>
-    <button class="page-tab" data-page="flashcards">Flashcards</button>
+    <button class="page-tab" data-page="flashcards">Free play</button>
+    <button class="page-tab" data-page="challenge">Challenge</button>
   </nav>
 
   <!-- ═══ PAGE: MY DECKS ═══════════════════════════════════════════════════ -->
@@ -215,10 +216,99 @@
 
   </main>
 
+  <!-- ═══ PAGE: CHALLENGE ══════════════════════════════════════════════════ -->
+  <main id="page-challenge" style="display:none;">
+
+    <!-- Level map -->
+    <section class="ch-level-map" id="ch-level-map">
+      <!-- populated by challenge.js -->
+    </section>
+
+    <!-- Active level UI (hidden until a level is started) -->
+    <section class="ch-active" id="ch-active" style="display:none;">
+
+      <div class="ch-active-header">
+        <div>
+          <div class="ch-active-title" id="ch-active-title"></div>
+          <div class="ch-active-sub" id="ch-active-sub"></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="ch-quit-btn">Quit level</button>
+      </div>
+
+      <!-- Progress toward pass threshold -->
+      <div class="ch-threshold-wrap">
+        <div class="ch-threshold-bar">
+          <div class="ch-threshold-fill" id="ch-threshold-fill"></div>
+          <div class="ch-threshold-marker" id="ch-threshold-marker"></div>
+        </div>
+        <div class="ch-threshold-label" id="ch-threshold-label"></div>
+      </div>
+
+      <!-- Reuse flashcard stage structure -->
+      <section class="fc-stage">
+        <div class="fc-card" id="ch-card">
+          <div class="fc-face fc-front" id="ch-front">
+            <div class="fc-art-wrap" id="ch-art-wrap">
+              <img id="ch-art" src="" alt="" />
+              <div class="fc-art-placeholder" id="ch-art-placeholder">&#9632;</div>
+            </div>
+            <div class="fc-card-name" id="ch-card-name">—</div>
+            <div class="fc-card-meta" id="ch-card-meta"></div>
+            <div class="fc-hint">Think about what this card does, then reveal</div>
+          </div>
+          <div class="fc-face fc-back" id="ch-back">
+            <div class="fc-back-name" id="ch-back-name"></div>
+            <div class="fc-oracle" id="ch-oracle"></div>
+            <div class="fc-coach-wrap">
+              <div class="fc-coach-label">// COACH</div>
+              <div class="fc-coach-text" id="ch-coach-text">
+                <span class="coach-placeholder">Press "Ask coach" for a note on this card.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fc-actions" id="ch-actions-front">
+          <button class="btn btn-primary" id="ch-reveal-btn">Reveal</button>
+          <button class="btn btn-ghost" id="ch-skip-btn">Skip</button>
+        </div>
+
+        <div class="fc-actions fc-rating" id="ch-actions-back" style="display:none;">
+          <button class="btn fc-btn-knew"   id="ch-knew-btn">&#10003; Knew it</button>
+          <button class="btn fc-btn-unsure" id="ch-unsure-btn">&#126; Unsure</button>
+          <button class="btn fc-btn-blank"  id="ch-blank-btn">&#215; Blank</button>
+          <button class="btn btn-ghost btn-sm" id="ch-coach-btn">Ask coach</button>
+        </div>
+      </section>
+
+      <!-- Card counter -->
+      <div class="fc-progress-wrap">
+        <div class="fc-progress-bar">
+          <div class="fc-progress-fill" id="ch-progress-fill"></div>
+        </div>
+        <div class="fc-progress-label" id="ch-progress-label"></div>
+      </div>
+
+    </section>
+
+    <!-- Level complete overlay (shown in-page when level passed/failed) -->
+    <section class="ch-result" id="ch-result" style="display:none;">
+      <div class="ch-result-icon" id="ch-result-icon"></div>
+      <div class="ch-result-title" id="ch-result-title"></div>
+      <div class="ch-result-body" id="ch-result-body"></div>
+      <div class="ch-result-actions">
+        <button class="btn btn-primary" id="ch-result-next">Continue</button>
+        <button class="btn btn-ghost"   id="ch-result-retry">Try again</button>
+      </div>
+    </section>
+
+  </main>
+
   <script src="card-images.js"></script>
   <script src="card-data.js"></script>
   <script src="card-sets.js"></script>
   <script src="app.js"></script>
   <script src="flashcards.js"></script>
+  <script src="challenge.js"></script>
 </body>
 </html>
