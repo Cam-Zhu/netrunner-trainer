@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Netrunner Deck Trainer</title>
+  <title>Runner's Toolkit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -14,22 +14,91 @@
 
   <header>
     <div class="logo">
-      <span class="logo-bracket">[</span>RUN<span class="logo-accent">_</span>TRAINER<span class="logo-bracket">]</span>
+      <span class="logo-bracket">[</span>RUNNER<span class="logo-accent">'</span>S<span class="logo-accent">_</span>TOOLKIT<span class="logo-bracket">]</span>
     </div>
-    <div class="header-sub">Netrunner deck coach &mdash; District Championship prep</div>
+    <div class="header-sub">Netrunner learning tools and deck coach &mdash; Built for newcomers and casual players</div>
   </header>
 
   <!-- Page-level tab nav -->
   <nav class="page-nav">
-    <button class="page-tab active" data-page="decks">My decks</button>
+    <button class="page-tab active" data-page="start">Start here</button>
+    <button class="page-tab" data-page="decks">My decks</button>
     <button class="page-tab" data-page="trainer">Hand trainer</button>
     <button class="page-tab" data-page="flashcards">Free play</button>
     <button class="page-tab" data-page="challenge">Challenge</button>
     <button class="page-tab" data-page="mechanics">Mechanics</button>
   </nav>
 
+  <!-- ═══ PAGE: START HERE ═════════════════════════════════════════════════ -->
+  <main id="page-start">
+
+    <section class="sh-hero">
+      <h1 class="sh-title">Runner's Toolkit</h1>
+      <p class="sh-subtitle">A solo training tool for competitive Android: Netrunner — built for District Championship prep.</p>
+    </section>
+
+    <section class="sh-section">
+      <h2 class="sh-heading">What is Android: Netrunner?</h2>
+      <p class="sh-body">Android: Netrunner is an asymmetric two-player card game set in a cyberpunk future. One player is the <strong>Corp</strong>, building remote servers, defending them with ice, and trying to score agendas. The other is the <strong>Runner</strong>, hacking into those servers to steal them. Every decision is a resource calculation — clicks, credits, and cards are finite.</p>
+      <p class="sh-body">The game is now published by <strong>Null Signal Games</strong>, a non-profit fan organisation that has continued developing new cards and running organised play since Fantasy Flight Games discontinued the game in 2018.</p>
+      <div class="sh-links">
+        <a class="sh-link" href="https://nullsignal.games" target="_blank" rel="noopener">
+          <span class="sh-link-label">Null Signal Games</span>
+          <span class="sh-link-desc">Official publisher — rules, sets, organised play, print-and-play</span>
+        </a>
+        <a class="sh-link" href="https://netrunnerdb.com" target="_blank" rel="noopener">
+          <span class="sh-link-label">NetrunnerDB</span>
+          <span class="sh-link-desc">Card database, deck builder, and community decklists</span>
+        </a>
+        <a class="sh-link" href="https://jinteki.net" target="_blank" rel="noopener">
+          <span class="sh-link-label">Jinteki.net</span>
+          <span class="sh-link-desc">Free browser-based online play — the main platform for digital Netrunner</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="sh-section">
+      <h2 class="sh-heading">How to use this trainer</h2>
+      <p class="sh-body">Start by entering your decklists in <strong>My decks</strong>. Every other feature draws from those lists. The trainer works best when your lists are up to date.</p>
+
+      <div class="sh-tab-grid">
+
+        <div class="sh-tab-card">
+          <div class="sh-tab-name">My decks</div>
+          <p class="sh-tab-body">Paste your Corp and Runner decklists here. Supports standard NetrunnerDB format — one card per line with <code>3x Card Name</code> or just <code>Card Name</code>. Save each deck separately. All other tabs use these lists as their card pool when you select "My decks" mode.</p>
+        </div>
+
+        <div class="sh-tab-card">
+          <div class="sh-tab-name">Hand trainer</div>
+          <p class="sh-tab-body">Draws a random opening hand from your active deck and gives you AI coaching. Choose your deck (Corp or Runner), pick a mode, set your hand size, and draw. Three modes are available: <strong>Opening</strong> assesses the hand and walks you through turns 1–3; <strong>Card focus</strong> explains every card in hand and their interactions; <strong>Mid-game</strong> invents a board state and asks for your line of play. Click any individual card for focused coaching on that card alone.</p>
+        </div>
+
+        <div class="sh-tab-card">
+          <div class="sh-tab-name">Free play</div>
+          <p class="sh-tab-body">Flashcard-style card recognition drill with no pressure. Each card is shown face-up with its artwork. Think about what it does, then hit <strong>Reveal</strong> to see the oracle text. Rate yourself — <em>Knew it</em>, <em>Unsure</em>, or <em>Blank</em>. Cards you struggle with come up more often. Use the pool controls to drill just your decks, a specific cycle, or the entire card pool. Your ratings persist between sessions.</p>
+        </div>
+
+        <div class="sh-tab-card">
+          <div class="sh-tab-name">Challenge</div>
+          <p class="sh-tab-body">A levelled progression through the Standard card pool. Five levels follow the sets in order: System Gateway → Elevation → Ashes Cycle → Borealis Cycle → Liberation Cycle. Each level offers two modes — <strong>Set focus</strong> drills only that level's new cards; <strong>Cumulative</strong> drills all cards up to and including that level. Pass a level by correctly identifying 80% of its cards. Levels unlock in sequence and your progress is saved locally.</p>
+        </div>
+
+        <div class="sh-tab-card">
+          <div class="sh-tab-name">Mechanics</div>
+          <p class="sh-tab-body">A searchable glossary of Netrunner rules and strategic concepts. Entries are split into <strong>Mechanics</strong> (rules-grounded definitions with precise timing detail) and <strong>Concepts</strong> (named strategic vocabulary like tempo, threat range, and kill windows). Use the filter buttons or type to search. Click any See also link to navigate between related entries. Press <kbd>/</kbd> anywhere on this page to focus the search box.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="sh-section sh-section--note">
+      <p class="sh-body">Card artwork and oracle text are sourced from the <a class="sh-inline-link" href="https://netrunnerdb.com" target="_blank" rel="noopener">NetrunnerDB v3 API</a>. All card text and artwork remains the property of Null Signal Games and Fantasy Flight Games respectively. This tool is a fan project for personal use.</p>
+    </section>
+
+  </main>
+
   <!-- ═══ PAGE: MY DECKS ═══════════════════════════════════════════════════ -->
-  <main id="page-decks">
+  <main id="page-decks" style="display:none;">
     <section class="deck-editors">
       <details class="deck-editor" id="editor-corp" open>
         <summary>Corp deck</summary>
