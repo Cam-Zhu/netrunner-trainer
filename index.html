@@ -21,12 +21,41 @@
 
   <!-- Page-level tab nav -->
   <nav class="page-nav">
-    <button class="page-tab active" data-page="trainer">Hand trainer</button>
+    <button class="page-tab active" data-page="decks">My decks</button>
+    <button class="page-tab" data-page="trainer">Hand trainer</button>
     <button class="page-tab" data-page="flashcards">Flashcards</button>
   </nav>
 
+  <!-- ═══ PAGE: MY DECKS ═══════════════════════════════════════════════════ -->
+  <main id="page-decks">
+    <section class="deck-editors">
+      <details class="deck-editor" id="editor-corp" open>
+        <summary>Corp deck</summary>
+        <div class="editor-inner">
+          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>.</p>
+          <textarea id="corp-input" spellcheck="false"></textarea>
+          <div class="editor-footer">
+            <span class="editor-status" id="corp-status"></span>
+            <button class="btn btn-primary btn-sm" onclick="saveDeck('corp')">Save</button>
+          </div>
+        </div>
+      </details>
+      <details class="deck-editor" id="editor-runner" open>
+        <summary>Runner deck</summary>
+        <div class="editor-inner">
+          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>.</p>
+          <textarea id="runner-input" spellcheck="false"></textarea>
+          <div class="editor-footer">
+            <span class="editor-status" id="runner-status"></span>
+            <button class="btn btn-primary btn-sm" onclick="saveDeck('runner')">Save</button>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
+
   <!-- ═══ PAGE: HAND TRAINER ═══════════════════════════════════════════════ -->
-  <main id="page-trainer">
+  <main id="page-trainer" style="display:none;">
     <!-- Deck selector + mode controls -->
     <section class="controls-bar">
       <div class="control-group">
@@ -76,32 +105,6 @@
       <div class="coach-body" id="coach-body">
         <span class="coach-placeholder">Select a card or analyse your hand &mdash; coaching will appear here.</span>
       </div>
-    </section>
-
-    <!-- Deck editors -->
-    <section class="deck-editors">
-      <details class="deck-editor" id="editor-corp">
-        <summary>Edit Corp deck</summary>
-        <div class="editor-inner">
-          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>.</p>
-          <textarea id="corp-input" spellcheck="false"></textarea>
-          <div class="editor-footer">
-            <span class="editor-status" id="corp-status"></span>
-            <button class="btn btn-primary btn-sm" onclick="saveDeck('corp')">Save</button>
-          </div>
-        </div>
-      </details>
-      <details class="deck-editor" id="editor-runner">
-        <summary>Edit Runner deck</summary>
-        <div class="editor-inner">
-          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>.</p>
-          <textarea id="runner-input" spellcheck="false"></textarea>
-          <div class="editor-footer">
-            <span class="editor-status" id="runner-status"></span>
-            <button class="btn btn-primary btn-sm" onclick="saveDeck('runner')">Save</button>
-          </div>
-        </div>
-      </details>
     </section>
   </main>
 
