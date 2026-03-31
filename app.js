@@ -342,10 +342,15 @@ async function callCoach(prompt) {
         messages: [{ role: 'user', content: prompt }],
       }),
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const text = (data.content || []).map(b => b.text || '').join('').trim();
-    showCoach(text || '(no response)');
+    if (res.status === 429) {
+      showCoach(data.error || 'Daily coach limit reached. Come back tomorrow.');
+    } else if (!res.ok) {
+      showCoach(`Error: HTTP ${res.status}.\n\nMake sure ANTHROPIC_API_KEY is set in your Netlify environment variables.`);
+    } else {
+      const text = (data.content || []).map(b => b.text || '').join('').trim();
+      showCoach(text || '(no response)');
+    }
   } catch (err) {
     showCoach(`Error: ${err.message}.\n\nMake sure ANTHROPIC_API_KEY is set in your Netlify environment variables.`);
   }
