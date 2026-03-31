@@ -5,6 +5,7 @@ document.querySelectorAll('.page-tab').forEach(tab => {
     const page = tab.dataset.page;
     document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
+    document.getElementById('page-decks').style.display      = page === 'decks'      ? '' : 'none';
     document.getElementById('page-trainer').style.display    = page === 'trainer'    ? '' : 'none';
     document.getElementById('page-flashcards').style.display = page === 'flashcards' ? '' : 'none';
     if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
