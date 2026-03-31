@@ -18,6 +18,8 @@ const STORAGE_KEY = 'nrtrainer_fc_ratings';
 const fc = {
   pool:        'decks',   // 'decks' | 'all'
   deckFilter:  'both',    // 'both' | 'corp' | 'runner'
+  cycleFilter: '',        // cycle_id or '' for all
+  setFilter:   '',        // set_id or '' for all
   currentCard: null,
   isFlipped:   false,
   session:     { knew: 0, unsure: 0, blank: 0, seen: 0 },
@@ -43,8 +45,14 @@ function saveRatings() {
 
 function buildPool() {
   if (fc.pool === 'all') {
-    // Full card pool from CARD_DATA, deduplicated by name
-    return typeof CARD_DATA !== 'undefined' ? Object.keys(CARD_DATA) : [];
+    if (typeof CARD_DATA === 'undefined') return [];
+    return Object.entries(CARD_DATA)
+      .filter(([, d]) => {
+        if (fc.cycleFilter && d.cycle_id !== fc.cycleFilter) return false;
+        if (fc.setFilter   && d.set_id   !== fc.setFilter)   return false;
+        return true;
+      })
+      .map(([name]) => name);
   }
 
   // My decks — pull unique names from the deck arrays in app.js state
@@ -100,6 +108,10 @@ const fcEls = {
   weakList:     document.getElementById('fc-weak-list'),
   weakCount:    document.getElementById('fc-weak-count'),
   deckGroup:    document.getElementById('fc-deck-group'),
+  cycleGroup:   document.getElementById('fc-cycle-group'),
+  setGroup:     document.getElementById('fc-set-group'),
+  cycleSelect:  document.getElementById('fc-cycle-select'),
+  setSelect:    document.getElementById('fc-set-select'),
 };
 
 // ─── Controls ─────────────────────────────────────────────────────────────────
@@ -112,7 +124,10 @@ function bindFcToggle(groupId, key) {
       btn.classList.add('active');
       fc[key] = btn.dataset.value;
       if (key === 'pool') {
-        fcEls.deckGroup.style.display = fc.pool === 'decks' ? '' : 'none';
+        const isAll = fc.pool === 'all';
+        fcEls.deckGroup.style.display  = isAll ? 'none' : '';
+        fcEls.cycleGroup.style.display = isAll ? '' : 'none';
+        fcEls.setGroup.style.display   = isAll ? '' : 'none';
       }
       fc.queue = [];
       fc.drawCard();
@@ -122,6 +137,55 @@ function bindFcToggle(groupId, key) {
 
 bindFcToggle('fc-pool-toggle',  'pool');
 bindFcToggle('fc-deck-toggle',  'deckFilter');
+
+// Populate cycle select from CARD_SETS
+function populateCycleSelect() {
+  if (typeof CARD_SETS === 'undefined') return;
+  fcEls.cycleSelect.innerHTML = '<option value="">All cycles</option>';
+  Object.entries(CARD_SETS).forEach(([cid, cycle]) => {
+    const opt = document.createElement('option');
+    opt.value = cid;
+    opt.textContent = cycle.name;
+    fcEls.cycleSelect.appendChild(opt);
+  });
+}
+
+// Populate set select for a given cycle (or all sets if no cycle)
+function populateSetSelect(cycleId) {
+  fcEls.setSelect.innerHTML = '<option value="">All sets</option>';
+  if (typeof CARD_SETS === 'undefined') return;
+  const cycles = cycleId ? { [cycleId]: CARD_SETS[cycleId] } : CARD_SETS;
+  Object.entries(cycles).forEach(([, cycle]) => {
+    if (!cycle) return;
+    Object.entries(cycle.sets).forEach(([sid, sname]) => {
+      const opt = document.createElement('option');
+      opt.value = sid;
+      opt.textContent = sname;
+      fcEls.setSelect.appendChild(opt);
+    });
+  });
+}
+
+// Cycle select change → repopulate sets, reset set filter
+fcEls.cycleSelect.addEventListener('change', () => {
+  fc.cycleFilter = fcEls.cycleSelect.value;
+  fc.setFilter   = '';
+  populateSetSelect(fc.cycleFilter);
+  fcEls.setSelect.value = '';
+  fc.queue = [];
+  fc.drawCard();
+});
+
+// Set select change → update filter
+fcEls.setSelect.addEventListener('change', () => {
+  fc.setFilter = fcEls.setSelect.value;
+  fc.queue = [];
+  fc.drawCard();
+});
+
+// Init selects on load
+populateCycleSelect();
+populateSetSelect('');
 
 document.getElementById('fc-reveal-btn').addEventListener('click', fcReveal);
 document.getElementById('fc-skip-btn').addEventListener('click', () => fc.drawCard());
