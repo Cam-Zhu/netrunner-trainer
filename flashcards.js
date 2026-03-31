@@ -12,6 +12,7 @@ document.querySelectorAll('.page-tab').forEach(tab => {
     document.getElementById('page-mechanics').style.display  = page === 'mechanics'  ? '' : 'none';
     if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
     if (page === 'challenge') ch.renderLevelMap();
+    if (page === 'mechanics') window.initMechanicsOnce();
   });
 });
 
