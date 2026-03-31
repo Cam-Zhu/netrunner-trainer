@@ -378,6 +378,10 @@ function chShowResult(passed) {
   if (passed) {
     ch.progress[progressKey(a.levelId, a.mode)] = true;
     saveProgress();
+    // Plausible analytics
+    if (typeof window.plausible !== 'undefined') {
+      window.plausible('Level passed', { props: { level: String(a.levelId), mode: a.mode } });
+    }
   }
 
   const knewCount  = Object.values(a.results).filter(r => r === 'knew').length;
