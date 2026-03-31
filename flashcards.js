@@ -8,7 +8,9 @@ document.querySelectorAll('.page-tab').forEach(tab => {
     document.getElementById('page-decks').style.display      = page === 'decks'      ? '' : 'none';
     document.getElementById('page-trainer').style.display    = page === 'trainer'    ? '' : 'none';
     document.getElementById('page-flashcards').style.display = page === 'flashcards' ? '' : 'none';
+    document.getElementById('page-challenge').style.display  = page === 'challenge'  ? '' : 'none';
     if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
+    if (page === 'challenge') ch.renderLevelMap();
   });
 });
 
