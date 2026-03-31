@@ -387,6 +387,110 @@ input[type=range]::-webkit-slider-thumb {
 .fc-set-group select:focus { outline: none; border-color: var(--accent-dim); color: var(--text); }
 .fc-set-group select option { background: var(--bg-card); color: var(--text); }
 
+/* ── Challenge mode ──────────────────────────────────────────────────────── */
+
+/* Level map */
+.ch-level-map {
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+.ch-level-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 20px;
+  display: flex; align-items: center; gap: 16px;
+  transition: border-color 0.15s;
+}
+.ch-level-card.unlocked:hover { border-color: var(--border-hi); cursor: pointer; }
+.ch-level-card.locked { opacity: 0.45; }
+.ch-level-card.passed-both { border-color: var(--accent-dim); }
+
+.ch-level-num {
+  font-size: 1.4rem; font-weight: 800; font-family: var(--font-display);
+  color: var(--text-mute); min-width: 2rem; text-align: center;
+  line-height: 1;
+}
+.ch-level-card.unlocked .ch-level-num { color: var(--text-dim); }
+.ch-level-card.passed-both .ch-level-num { color: var(--accent); }
+
+.ch-level-info { flex: 1; }
+.ch-level-name {
+  font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 3px;
+}
+.ch-level-desc {
+  font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-dim);
+}
+
+.ch-level-modes { display: flex; gap: 8px; }
+.ch-mode-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 8px 14px; border-radius: var(--radius); border: 1px solid var(--border);
+  background: transparent; cursor: pointer; transition: all 0.15s; min-width: 90px;
+}
+.ch-mode-btn:hover { border-color: var(--border-hi); background: var(--bg-raised); }
+.ch-mode-btn.passed { border-color: var(--accent-dim); background: var(--accent-bg); }
+.ch-mode-btn.locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.ch-mode-label {
+  font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.ch-mode-btn.passed .ch-mode-label { color: var(--accent-dim); }
+.ch-mode-badge {
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--text-mute);
+}
+.ch-mode-btn.passed .ch-mode-badge { color: var(--accent); }
+
+.ch-lock-icon {
+  font-size: 1rem; color: var(--text-mute);
+}
+
+/* Active level */
+.ch-active-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 1rem; gap: 1rem;
+}
+.ch-active-title {
+  font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 3px;
+}
+.ch-active-sub {
+  font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-dim);
+}
+
+/* Threshold bar */
+.ch-threshold-wrap { margin-bottom: 1.5rem; }
+.ch-threshold-bar {
+  height: 6px; background: var(--border); border-radius: 3px;
+  overflow: visible; position: relative; margin-bottom: 6px;
+}
+.ch-threshold-fill {
+  height: 100%; background: var(--accent); border-radius: 3px;
+  width: 0%; transition: width 0.4s ease;
+}
+.ch-threshold-marker {
+  position: absolute; top: -4px; height: 14px; width: 2px;
+  background: var(--warn); border-radius: 1px;
+  left: 80%; /* 80% pass threshold */
+}
+.ch-threshold-label {
+  font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-dim);
+  display: flex; justify-content: space-between;
+}
+
+/* Result screen */
+.ch-result {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1rem; padding: 3rem 1.5rem; text-align: center;
+}
+.ch-result-icon { font-size: 3rem; line-height: 1; }
+.ch-result-title {
+  font-size: 1.3rem; font-weight: 800; color: var(--text);
+}
+.ch-result-body {
+  font-size: 0.85rem; font-family: var(--font-mono); color: var(--text-dim);
+  max-width: 360px; line-height: 1.7;
+}
+.ch-result-actions { display: flex; gap: 10px; margin-top: 0.5rem; }
+
 /* responsive */
 @media (max-width: 600px) {
   header { padding: 1rem; flex-direction: column; gap: 4px; }
@@ -394,4 +498,7 @@ input[type=range]::-webkit-slider-thumb {
   .controls-bar { gap: 1rem; }
   .hand-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
   .fc-card { max-width: 100%; }
+  .ch-level-card { flex-wrap: wrap; }
+  .ch-level-modes { width: 100%; }
+  .ch-mode-btn { flex: 1; }
 }
