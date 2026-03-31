@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Netrunners Toolkit</title>
+  <title>Netrunner Deck Trainer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -14,9 +14,9 @@
 
   <header>
     <div class="logo">
-      <span class="logo-bracket">[</span>RUNNERS<span class="logo-accent">_</span>TOOLKIT<span class="logo-bracket">]</span>
+      <span class="logo-bracket">[</span>RUN<span class="logo-accent">_</span>TRAINER<span class="logo-bracket">]</span>
     </div>
-    <div class="header-sub">Netrunner learning and deck coach &mdash; For newcomers and casual players</div>
+    <div class="header-sub">Netrunner deck coach &mdash; District Championship prep</div>
   </header>
 
   <!-- Page-level tab nav -->
@@ -25,6 +25,7 @@
     <button class="page-tab" data-page="trainer">Hand trainer</button>
     <button class="page-tab" data-page="flashcards">Free play</button>
     <button class="page-tab" data-page="challenge">Challenge</button>
+    <button class="page-tab" data-page="mechanics">Mechanics</button>
   </nav>
 
   <!-- ═══ PAGE: MY DECKS ═══════════════════════════════════════════════════ -->
@@ -310,5 +311,52 @@
   <script src="app.js"></script>
   <script src="flashcards.js"></script>
   <script src="challenge.js"></script>
+
+  <!-- ═══ PAGE: MECHANICS ══════════════════════════════════════════════════ -->
+  <main id="page-mechanics" style="display:none;">
+
+    <!-- Search + filter bar -->
+    <section class="controls-bar mech-controls">
+      <div class="mech-search-wrap">
+        <span class="mech-search-icon">⌕</span>
+        <input
+          type="text"
+          id="mech-search"
+          class="mech-search"
+          placeholder="Search terms… (press / to focus)"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      <div class="mech-filters">
+        <button class="mech-filter-btn active" data-filter="all">All</button>
+        <button class="mech-filter-btn" data-filter="mechanic">Mechanics</button>
+        <button class="mech-filter-btn" data-filter="concept">Concepts</button>
+      </div>
+      <span class="mech-count" id="mech-count"></span>
+    </section>
+
+    <!-- Split layout: list + detail -->
+    <section class="mech-body">
+
+      <!-- Left: scrollable term list -->
+      <div class="mech-list-wrap">
+        <div class="mech-list" id="mech-results">
+          <!-- populated by mechanics.js -->
+        </div>
+      </div>
+
+      <!-- Right: detail panel -->
+      <div class="mech-detail-wrap">
+        <div class="mech-detail" id="mech-detail">
+          <div class="mech-detail-empty">Select a term to see its definition.</div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="mechanics.js"></script>
 </body>
 </html>
