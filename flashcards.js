@@ -140,7 +140,10 @@ bindFcToggle('fc-deck-toggle',  'deckFilter');
 
 // Populate cycle select from CARD_SETS
 function populateCycleSelect() {
-  if (typeof CARD_SETS === 'undefined') return;
+  if (typeof CARD_SETS === 'undefined') {
+    console.warn('CARD_SETS not loaded — run scripts/fetch-card-data.js and add card-sets.js to your project');
+    return;
+  }
   fcEls.cycleSelect.innerHTML = '<option value="">All cycles</option>';
   Object.entries(CARD_SETS).forEach(([cid, cycle]) => {
     const opt = document.createElement('option');
@@ -148,6 +151,7 @@ function populateCycleSelect() {
     opt.textContent = cycle.name;
     fcEls.cycleSelect.appendChild(opt);
   });
+  console.log('Cycles loaded:', Object.keys(CARD_SETS));
 }
 
 // Populate set select for a given cycle (or all sets if no cycle)
@@ -200,8 +204,24 @@ document.getElementById('fc-reset-stats').addEventListener('click', fcResetSessi
 fc.drawCard = function() {
   const pool = buildPool();
   if (!pool.length) {
+    // Reset to a clean empty state so buttons don't stay broken
+    fc.currentCard = null;
+    fc.isFlipped   = false;
+    fcEls.card.classList.remove('is-flipped');
+    fcEls.actionsFront.style.display = 'none';
+    fcEls.actionsBack.style.display  = 'none';
+    fcEls.art.src = '';
+    fcEls.artPlaceholder.classList.remove('hidden');
     fcEls.cardName.textContent = 'No cards in pool';
-    fcEls.cardMeta.textContent = 'Add cards to your decks or switch to All cards';
+    const hasSets = typeof CARD_SETS !== 'undefined';
+    const cycleSelected = fc.cycleFilter || fc.setFilter;
+    fcEls.cardMeta.textContent = cycleSelected
+      ? 'No cards found for this cycle / set filter'
+      : fc.pool === 'all' && !hasSets
+        ? 'card-sets.js not found — run the fetch script'
+        : 'Add cards to your decks or switch to All cards';
+    fcEls.progressLabel.textContent = 'Pool is empty';
+    fcEls.progressFill.style.width  = '0%';
     return;
   }
 
