@@ -19,7 +19,14 @@
     <div class="header-sub">Netrunner deck coach &mdash; District Championship prep</div>
   </header>
 
-  <main>
+  <!-- Page-level tab nav -->
+  <nav class="page-nav">
+    <button class="page-tab active" data-page="trainer">Hand trainer</button>
+    <button class="page-tab" data-page="flashcards">Flashcards</button>
+  </nav>
+
+  <!-- ═══ PAGE: HAND TRAINER ═══════════════════════════════════════════════ -->
+  <main id="page-trainer">
     <!-- Deck selector + mode controls -->
     <section class="controls-bar">
       <div class="control-group">
@@ -98,8 +105,104 @@
     </section>
   </main>
 
+  <!-- ═══ PAGE: FLASHCARDS ═════════════════════════════════════════════════ -->
+  <main id="page-flashcards" style="display:none;">
+
+    <!-- Flashcard controls bar -->
+    <section class="controls-bar">
+      <div class="control-group">
+        <label class="ctrl-label">Card pool</label>
+        <div class="toggle-group" id="fc-pool-toggle">
+          <button class="toggle-btn active" data-value="decks">My decks</button>
+          <button class="toggle-btn" data-value="all">All cards</button>
+        </div>
+      </div>
+      <div class="control-group" id="fc-deck-group">
+        <label class="ctrl-label">Deck</label>
+        <div class="toggle-group" id="fc-deck-toggle">
+          <button class="toggle-btn active" data-value="both">Both</button>
+          <button class="toggle-btn" data-value="corp">Corp</button>
+          <button class="toggle-btn" data-value="runner">Runner</button>
+        </div>
+      </div>
+      <div class="control-group" style="margin-left:auto;">
+        <label class="ctrl-label">Session</label>
+        <div class="fc-stats">
+          <span class="fc-stat fc-stat--knew" id="fc-knew">0</span>
+          <span class="fc-stat-sep">/</span>
+          <span class="fc-stat fc-stat--unsure" id="fc-unsure">0</span>
+          <span class="fc-stat-sep">/</span>
+          <span class="fc-stat fc-stat--blank" id="fc-blank">0</span>
+          <span class="fc-stat-label">knew / unsure / blank</span>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="fc-reset-stats">Reset stats</button>
+    </section>
+
+    <!-- Card stage -->
+    <section class="fc-stage">
+      <div class="fc-card" id="fc-card">
+        <!-- Front face -->
+        <div class="fc-face fc-front" id="fc-front">
+          <div class="fc-art-wrap" id="fc-art-wrap">
+            <img id="fc-art" src="" alt="" />
+            <div class="fc-art-placeholder" id="fc-art-placeholder">&#9632;</div>
+          </div>
+          <div class="fc-card-name" id="fc-card-name">—</div>
+          <div class="fc-card-meta" id="fc-card-meta"></div>
+          <div class="fc-hint">Think about what this card does, then reveal</div>
+        </div>
+
+        <!-- Back face -->
+        <div class="fc-face fc-back" id="fc-back">
+          <div class="fc-back-name" id="fc-back-name"></div>
+          <div class="fc-oracle" id="fc-oracle"></div>
+          <div class="fc-coach-wrap">
+            <div class="fc-coach-label">// COACH</div>
+            <div class="fc-coach-text" id="fc-coach-text">
+              <span class="coach-placeholder">Press "Ask coach" for a coaching note on this card.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action bar — shown before reveal -->
+      <div class="fc-actions" id="fc-actions-front">
+        <button class="btn btn-primary" id="fc-reveal-btn">Reveal</button>
+        <button class="btn btn-ghost" id="fc-skip-btn">Skip</button>
+      </div>
+
+      <!-- Rating bar — shown after reveal -->
+      <div class="fc-actions fc-rating" id="fc-actions-back" style="display:none;">
+        <button class="btn fc-btn-knew"   id="fc-knew-btn">&#10003; Knew it</button>
+        <button class="btn fc-btn-unsure" id="fc-unsure-btn">&#126; Unsure</button>
+        <button class="btn fc-btn-blank"  id="fc-blank-btn">&#215; Blank</button>
+        <button class="btn btn-ghost btn-sm" id="fc-coach-btn">Ask coach</button>
+      </div>
+    </section>
+
+    <!-- Progress bar -->
+    <section class="fc-progress-wrap">
+      <div class="fc-progress-bar">
+        <div class="fc-progress-fill" id="fc-progress-fill"></div>
+      </div>
+      <div class="fc-progress-label" id="fc-progress-label">Draw a card to begin</div>
+    </section>
+
+    <!-- Weak cards panel -->
+    <details class="deck-editor" id="fc-weak-panel">
+      <summary>Cards to review <span id="fc-weak-count"></span></summary>
+      <div class="editor-inner">
+        <p class="editor-hint">Cards you rated "unsure" or "blank" this session. These come up more often.</p>
+        <div class="fc-weak-list" id="fc-weak-list"></div>
+      </div>
+    </details>
+
+  </main>
+
   <script src="card-images.js"></script>
   <script src="card-data.js"></script>
   <script src="app.js"></script>
+  <script src="flashcards.js"></script>
 </body>
 </html>
