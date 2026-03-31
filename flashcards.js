@@ -9,6 +9,7 @@ document.querySelectorAll('.page-tab').forEach(tab => {
     document.getElementById('page-trainer').style.display    = page === 'trainer'    ? '' : 'none';
     document.getElementById('page-flashcards').style.display = page === 'flashcards' ? '' : 'none';
     document.getElementById('page-challenge').style.display  = page === 'challenge'  ? '' : 'none';
+    document.getElementById('page-mechanics').style.display  = page === 'mechanics'  ? '' : 'none';
     if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
     if (page === 'challenge') ch.renderLevelMap();
   });
