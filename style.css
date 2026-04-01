@@ -65,6 +65,7 @@ main { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; display: fle
 }
 .control-group { display: flex; flex-direction: column; gap: 6px; }
 .ctrl-label { font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+.ctrl-label-sub { font-size: 0.65rem; color: var(--text-mute); text-transform: none; letter-spacing: 0; }
 
 .toggle-group { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .toggle-btn {
