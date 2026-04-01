@@ -204,7 +204,6 @@ populateCycleSelect();
 populateSetSelect('');
 
 document.getElementById('fc-reveal-btn').addEventListener('click', fcReveal);
-document.getElementById('fc-skip-btn').addEventListener('click', () => fc.drawCard());
 document.getElementById('fc-knew-btn').addEventListener('click',   () => fcRate('knew'));
 document.getElementById('fc-unsure-btn').addEventListener('click', () => fcRate('unsure'));
 document.getElementById('fc-blank-btn').addEventListener('click',  () => fcRate('blank'));
