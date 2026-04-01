@@ -1,6 +1,6 @@
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const DAILY_LIMIT = 1;        // max coach calls per IP per day
+const DAILY_LIMIT = 25;        // max coach calls per IP per day
 const TTL_SECONDS = 86400;     // 24 hours — counter resets automatically
 
 // ─── Upstash Redis helper ─────────────────────────────────────────────────────
