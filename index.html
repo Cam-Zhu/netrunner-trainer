@@ -29,13 +29,17 @@
   <nav class="page-nav">
     <button class="page-tab active" data-page="start">Start here</button>
     <button class="page-tab" data-page="decks">My decks</button>
+    <!-- Hand trainer hidden pending coaching improvements
     <button class="page-tab" data-page="trainer">Hand trainer</button>
+    -->
     <button class="page-tab" data-page="flashcards">Free play</button>
     <button class="page-tab" data-page="challenge">Challenge</button>
+    <!-- Mechanics hidden pending glossary review
     <button class="page-tab" data-page="mechanics">Mechanics</button>
+    -->
   </nav>
 
-  <!-- ═══ PAGE: START HERE ═════════════════════════════════════════════════ -->
+  <!-- PAGE: START HERE -->
   <main id="page-start">
 
     <section class="sh-hero">
@@ -75,11 +79,6 @@
         </div>
 
         <div class="sh-tab-card">
-          <div class="sh-tab-name">Hand trainer</div>
-          <p class="sh-tab-body">Draws a random opening hand from your active deck and gives you AI coaching. Choose your deck (Corp or Runner), pick a mode, set your hand size, and draw. Three modes are available: <strong>Opening</strong> assesses the hand and walks you through turns 1–3; <strong>Card focus</strong> explains every card in hand and their interactions; <strong>Mid-game</strong> invents a board state and asks for your line of play. Click any individual card for focused coaching on that card alone.</p>
-        </div>
-
-        <div class="sh-tab-card">
           <div class="sh-tab-name">Free play</div>
           <p class="sh-tab-body">Flashcard-style card recognition drill with no pressure. Each card is shown face-up with its artwork. Think about what it does, then hit <strong>Reveal</strong> to see the oracle text. Rate yourself — <em>Knew it</em>, <em>Unsure</em>, or <em>Blank</em>. Cards you struggle with come up more often. Use the pool controls to drill just your decks, a specific cycle, or the entire card pool. Your ratings persist between sessions.</p>
         </div>
@@ -87,11 +86,6 @@
         <div class="sh-tab-card">
           <div class="sh-tab-name">Challenge</div>
           <p class="sh-tab-body">A levelled progression through the Standard card pool. Five levels follow the sets in order: System Gateway → Elevation → Ashes Cycle → Borealis Cycle → Liberation Cycle. Each level offers two modes — <strong>Set focus</strong> drills only that level's new cards; <strong>Cumulative</strong> drills all cards up to and including that level. Pass a level by correctly identifying 80% of its cards. Levels unlock in sequence and your progress is saved locally.</p>
-        </div>
-
-        <div class="sh-tab-card">
-          <div class="sh-tab-name">Mechanics</div>
-          <p class="sh-tab-body">A searchable glossary of Netrunner rules and strategic concepts. Entries are split into <strong>Mechanics</strong> (rules-grounded definitions with precise timing detail) and <strong>Concepts</strong> (named strategic vocabulary like tempo, threat range, and kill windows). Use the filter buttons or type to search. Click any See also link to navigate between related entries. Press <kbd>/</kbd> anywhere on this page to focus the search box.</p>
         </div>
 
       </div>
@@ -103,7 +97,7 @@
 
   </main>
 
-  <!-- ═══ PAGE: MY DECKS ═══════════════════════════════════════════════════ -->
+  <!-- PAGE: MY DECKS -->
   <main id="page-decks" style="display:none;">
     <section class="deck-editors">
       <details class="deck-editor" id="editor-corp" open>
@@ -131,9 +125,8 @@
     </section>
   </main>
 
-  <!-- ═══ PAGE: HAND TRAINER ═══════════════════════════════════════════════ -->
+  <!-- PAGE: HAND TRAINER (hidden) -->
   <main id="page-trainer" style="display:none;">
-    <!-- Deck selector + mode controls -->
     <section class="controls-bar">
       <div class="control-group">
         <label class="ctrl-label">Deck</label>
@@ -155,8 +148,6 @@
         <input type="range" min="3" max="7" value="5" id="hand-size" />
       </div>
     </section>
-
-    <!-- Hand area -->
     <section class="hand-section">
       <div class="hand-meta">
         <span id="hand-status">No hand drawn yet</span>
@@ -172,8 +163,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Coach panel -->
     <section class="coach-panel">
       <div class="coach-header">
         <span class="coach-label">// COACH OUTPUT</span>
@@ -185,10 +174,8 @@
     </section>
   </main>
 
-  <!-- ═══ PAGE: FLASHCARDS ═════════════════════════════════════════════════ -->
+  <!-- PAGE: FLASHCARDS -->
   <main id="page-flashcards" style="display:none;">
-
-    <!-- Flashcard controls bar -->
     <section class="controls-bar">
       <div class="control-group">
         <label class="ctrl-label">Card pool</label>
@@ -230,11 +217,8 @@
       </div>
       <button class="btn btn-ghost btn-sm" id="fc-reset-stats">Reset stats</button>
     </section>
-
-    <!-- Card stage -->
     <section class="fc-stage">
       <div class="fc-card" id="fc-card">
-        <!-- Front face -->
         <div class="fc-face fc-front" id="fc-front">
           <div class="fc-art-wrap" id="fc-art-wrap">
             <img id="fc-art" src="" alt="" />
@@ -244,8 +228,6 @@
           <div class="fc-card-meta" id="fc-card-meta"></div>
           <div class="fc-hint">Think about what this card does, then reveal</div>
         </div>
-
-        <!-- Back face -->
         <div class="fc-face fc-back" id="fc-back">
           <div class="fc-back-name" id="fc-back-name"></div>
           <div class="fc-oracle" id="fc-oracle"></div>
@@ -257,13 +239,9 @@
           </div>
         </div>
       </div>
-
-      <!-- Action bar — shown before reveal -->
       <div class="fc-actions" id="fc-actions-front">
         <button class="btn btn-primary" id="fc-reveal-btn">Reveal</button>
       </div>
-
-      <!-- Rating bar — shown after reveal -->
       <div class="fc-actions fc-rating" id="fc-actions-back" style="display:none;">
         <button class="btn fc-btn-knew"   id="fc-knew-btn">&#10003; Knew it</button>
         <button class="btn fc-btn-unsure" id="fc-unsure-btn">&#126; Unsure</button>
@@ -271,16 +249,12 @@
         <button class="btn btn-ghost btn-sm" id="fc-coach-btn">Ask coach</button>
       </div>
     </section>
-
-    <!-- Progress bar -->
     <section class="fc-progress-wrap">
       <div class="fc-progress-bar">
         <div class="fc-progress-fill" id="fc-progress-fill"></div>
       </div>
       <div class="fc-progress-label" id="fc-progress-label">Draw a card to begin</div>
     </section>
-
-    <!-- Weak cards panel -->
     <details class="deck-editor" id="fc-weak-panel">
       <summary>Cards to review <span id="fc-weak-count"></span></summary>
       <div class="editor-inner">
@@ -288,20 +262,12 @@
         <div class="fc-weak-list" id="fc-weak-list"></div>
       </div>
     </details>
-
   </main>
 
-  <!-- ═══ PAGE: CHALLENGE ══════════════════════════════════════════════════ -->
+  <!-- PAGE: CHALLENGE -->
   <main id="page-challenge" style="display:none;">
-
-    <!-- Level map -->
-    <section class="ch-level-map" id="ch-level-map">
-      <!-- populated by challenge.js -->
-    </section>
-
-    <!-- Active level UI (hidden until a level is started) -->
+    <section class="ch-level-map" id="ch-level-map"></section>
     <section class="ch-active" id="ch-active" style="display:none;">
-
       <div class="ch-active-header">
         <div>
           <div class="ch-active-title" id="ch-active-title"></div>
@@ -309,8 +275,6 @@
         </div>
         <button class="btn btn-ghost btn-sm" id="ch-quit-btn">Quit level</button>
       </div>
-
-      <!-- Progress toward pass threshold -->
       <div class="ch-threshold-wrap">
         <div class="ch-threshold-bar">
           <div class="ch-threshold-fill" id="ch-threshold-fill"></div>
@@ -318,8 +282,6 @@
         </div>
         <div class="ch-threshold-label" id="ch-threshold-label"></div>
       </div>
-
-      <!-- Reuse flashcard stage structure -->
       <section class="fc-stage">
         <div class="fc-card" id="ch-card">
           <div class="fc-face fc-front" id="ch-front">
@@ -342,11 +304,9 @@
             </div>
           </div>
         </div>
-
         <div class="fc-actions" id="ch-actions-front">
           <button class="btn btn-primary" id="ch-reveal-btn">Reveal</button>
         </div>
-
         <div class="fc-actions fc-rating" id="ch-actions-back" style="display:none;">
           <button class="btn fc-btn-knew"   id="ch-knew-btn">&#10003; Knew it</button>
           <button class="btn fc-btn-unsure" id="ch-unsure-btn">&#126; Unsure</button>
@@ -354,18 +314,13 @@
           <button class="btn btn-ghost btn-sm" id="ch-coach-btn">Ask coach</button>
         </div>
       </section>
-
-      <!-- Card counter -->
       <div class="fc-progress-wrap">
         <div class="fc-progress-bar">
           <div class="fc-progress-fill" id="ch-progress-fill"></div>
         </div>
         <div class="fc-progress-label" id="ch-progress-label"></div>
       </div>
-
     </section>
-
-    <!-- Level complete overlay (shown in-page when level passed/failed) -->
     <section class="ch-result" id="ch-result" style="display:none;">
       <div class="ch-result-icon" id="ch-result-icon"></div>
       <div class="ch-result-title" id="ch-result-title"></div>
@@ -375,7 +330,6 @@
         <button class="btn btn-ghost"   id="ch-result-retry">Try again</button>
       </div>
     </section>
-
   </main>
 
   <script src="card-images.js"></script>
@@ -385,21 +339,12 @@
   <script src="flashcards.js"></script>
   <script src="challenge.js"></script>
 
-  <!-- ═══ PAGE: MECHANICS ══════════════════════════════════════════════════ -->
+  <!-- PAGE: MECHANICS (hidden) -->
   <main id="page-mechanics" style="display:none;">
-
-    <!-- Search + filter bar -->
     <section class="controls-bar mech-controls">
       <div class="mech-search-wrap">
         <span class="mech-search-icon">⌕</span>
-        <input
-          type="text"
-          id="mech-search"
-          class="mech-search"
-          placeholder="Search terms… (press / to focus)"
-          autocomplete="off"
-          spellcheck="false"
-        />
+        <input type="text" id="mech-search" class="mech-search" placeholder="Search terms… (press / to focus)" autocomplete="off" spellcheck="false" />
       </div>
       <div class="mech-filters">
         <button class="mech-filter-btn active" data-filter="all">All</button>
@@ -408,26 +353,16 @@
       </div>
       <span class="mech-count" id="mech-count"></span>
     </section>
-
-    <!-- Split layout: list + detail -->
     <section class="mech-body">
-
-      <!-- Left: scrollable term list -->
       <div class="mech-list-wrap">
-        <div class="mech-list" id="mech-results">
-          <!-- populated by mechanics.js -->
-        </div>
+        <div class="mech-list" id="mech-results"></div>
       </div>
-
-      <!-- Right: detail panel -->
       <div class="mech-detail-wrap">
         <div class="mech-detail" id="mech-detail">
           <div class="mech-detail-empty">Select a term to see its definition.</div>
         </div>
       </div>
-
     </section>
-
   </main>
 
   <script src="mechanics.js"></script>
