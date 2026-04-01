@@ -649,7 +649,7 @@ input[type=range]::-webkit-slider-thumb {
   font-family: var(--font-mono); margin-bottom: 1rem;
 }
 .sh-body {
-  font-size: 0.88rem; color: var(--text-dim); line-height: 1.8;
+  font-size: 0.95rem; color: var(--text-dim); line-height: 1.8;
   max-width: 660px; margin-bottom: 0.75rem;
 }
 .sh-body strong { color: var(--text); font-weight: 500; }
@@ -692,7 +692,7 @@ input[type=range]::-webkit-slider-thumb {
   text-transform: uppercase; margin-bottom: 6px;
 }
 .sh-tab-body {
-  font-size: 0.82rem; color: var(--text-dim); line-height: 1.75; margin: 0;
+  font-size: 0.9rem; color: var(--text-dim); line-height: 1.75; margin: 0;
 }
 .sh-tab-body strong { color: var(--text); font-weight: 500; }
 .sh-tab-body em { color: var(--text); font-style: normal; }
