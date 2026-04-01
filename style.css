@@ -192,6 +192,15 @@ input[type=range]::-webkit-slider-thumb {
 }
 @keyframes blink { 0%,100%{ opacity:1 } 50%{ opacity:0 } }
 
+/* Make the analyse button stand out in the coach header */
+#analyse-btn {
+  border-color: var(--accent-dim); color: var(--accent);
+}
+#analyse-btn:hover:not(:disabled) {
+  background: var(--accent-bg); border-color: var(--accent); color: var(--accent);
+}
+#analyse-btn:disabled { border-color: var(--border); color: var(--text-dim); opacity: 0.6; }
+
 /* buttons */
 .btn {
   font-family: var(--font-display); font-size: 0.8rem; font-weight: 500;
