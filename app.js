@@ -221,12 +221,50 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// ─── Deck identity detection ──────────────────────────────────────────────────
+
+// Scans the active deck for an identity card and returns a description
+// of the deck for use in coaching prompts.
+function detectDeckInfo(side) {
+  if (typeof CARD_DATA === 'undefined') {
+    return side === 'corp' ? 'Corp' : 'Runner';
+  }
+
+  const deck = state.decks[side];
+
+  // Find the identity card
+  const identityCard = deck.find(name => {
+    const d = CARD_DATA[name];
+    return d && d.type === 'identity';
+  });
+
+  // Collect all factions represented in the deck (excluding neutral)
+  const factions = new Set();
+  deck.forEach(name => {
+    const d = CARD_DATA[name];
+    if (d && d.faction && !d.faction.includes('neutral')) {
+      factions.add(d.faction.replace(/_/g, ' '));
+    }
+  });
+
+  if (identityCard) {
+    const d = CARD_DATA[identityCard];
+    const faction = d.faction ? d.faction.replace(/_/g, ' ') : '';
+    return `${identityCard}${faction ? ` (${faction})` : ''}`;
+  }
+
+  // No identity found — describe by faction composition
+  if (factions.size === 1) return `${[...factions][0]} ${side}`;
+  if (factions.size > 1)   return `${side} (${[...factions].join(' / ')})`;
+  return side === 'corp' ? 'Corp' : 'Runner';
+}
+
 // ─── Card selection ───────────────────────────────────────────────────────────
 
 function selectCard(card) {
   state.selectedCard = card;
   renderHand();
-  const deckLabel = state.activeDeck === 'corp' ? 'Weyland Glacier Corp' : 'Loup Anarch Runner';
+  const deckLabel = detectDeckInfo(state.activeDeck);
   const prompt = buildCardPrompt(card, deckLabel);
   callCoach(prompt);
 }
@@ -235,7 +273,7 @@ function selectCard(card) {
 
 function analyseHand() {
   if (!state.hand.length) { drawHand(); return; }
-  const deckLabel = state.activeDeck === 'corp' ? 'Weyland Glacier Corp' : 'Loup Anarch Runner';
+  const deckLabel = detectDeckInfo(state.activeDeck);
   const prompt = buildHandPrompt(deckLabel);
   callCoach(prompt);
 }
@@ -279,16 +317,20 @@ Key rules to apply precisely:
 - ICE is installed unrezzed. Rezzing costs credits. The Runner encounters ICE when running.
 - Subroutines on unbroken ICE fire. Icebreakers break subroutines by spending credits.
 - Cards with [->] are subroutines on ICE.
-- "Recurring credits" refill at the start of each turn.
-- Fermenter gains 1 virus counter per turn; trash it to gain 2 credits per counter.
-- Botulus and Chisel use virus counters to break/destroy ICE.
-- Hoshiko Shiro is banned in Standard for the 2026 season.
+- Recurring credits refill at the start of each turn.
+- Tags remain until the Runner spends 1 click and 2 credits to remove each one.
+- Hoshiko Shiro, Bankhar, Cleaver, and several other cards are banned in Standard for the 2026 season.
 
-Faction context:
-- Weyland Consortium: glacier scoring, big taxing ICE, economic operations, meat damage threats.
-- Anarch (Loup): virus-based ICE destruction, aggressive runs, tempo through destruction.
+Faction archetypes for reference:
+- Haas-Bioroid: efficient ice, click manipulation, fast advance
+- Jinteki: net damage, ambushes, taxing remotes, traps
+- NBN: tagging, asset spam, fast advance, news cycles
+- Weyland Consortium: big ice, glacier scoring, meat damage, economic operations
+- Anarch: virus pressure, ice destruction, aggressive runs, resource denial
+- Criminal: credits, run events, bypass, disruption
+- Shaper: efficient breakers, recursion, setup-heavy, powerful late game
 
-Be precise about costs, timing, and card text. If oracle text is provided for a card, treat it as authoritative. Never invent card abilities. Be direct and concise.`;
+The player's identity and faction will be specified in each prompt. Coach accordingly — adapt your advice to the actual cards and identity provided, not generic assumptions. If oracle text is provided for a card, treat it as authoritative. Never invent card abilities. Be direct and concise.`;
 
 // ─── Prompt builders ──────────────────────────────────────────────────────────
 
