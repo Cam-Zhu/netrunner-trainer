@@ -163,7 +163,6 @@ chEls.quitBtn.addEventListener('click', () => {
 });
 
 document.getElementById('ch-reveal-btn').addEventListener('click', chReveal);
-document.getElementById('ch-skip-btn').addEventListener('click', () => chDraw());
 document.getElementById('ch-knew-btn').addEventListener('click',   () => chRate('knew'));
 document.getElementById('ch-unsure-btn').addEventListener('click', () => chRate('unsure'));
 document.getElementById('ch-blank-btn').addEventListener('click',  () => chRate('blank'));
