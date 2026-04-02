@@ -92,22 +92,26 @@ function buildPool() {
   return [...names];
 }
 
-// Build a weighted queue: cards rated 'blank' appear 3×, 'unsure' 2×, rest 1×
+// Build a single-pass queue: each card appears exactly once, but order is
+// weighted so weaker cards tend to appear earlier in the session.
 function buildQueue(pool) {
-  const q = [];
+  // Sort: blank > unsure > knew/unseen, then shuffle within each group
+  const groups = { blank: [], unsure: [], other: [] };
   for (const name of pool) {
     const r = fc.ratings[name];
-    const weight = r
-      ? (r.blank > r.knew ? 3 : r.unsure > r.knew ? 2 : 1)
-      : 1;
-    for (let i = 0; i < weight; i++) q.push(name);
+    if (r && r.blank > r.knew) groups.blank.push(name);
+    else if (r && r.unsure > r.knew) groups.unsure.push(name);
+    else groups.other.push(name);
   }
-  // Shuffle
-  for (let i = q.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [q[i], q[j]] = [q[j], q[i]];
-  }
-  return q;
+  const shuffle = a => {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  // Concat in priority order, then reverse so pop() gives us the front
+  return [...shuffle(groups.other), ...shuffle(groups.unsure), ...shuffle(groups.blank)].reverse();
 }
 
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
@@ -250,7 +254,13 @@ fc.drawCard = function() {
     return;
   }
 
-  // Refill queue when empty
+  // Session complete — every card has been seen once
+  if (!fc.queue.length && fc.session.seen > 0) {
+    showSessionComplete(pool.length);
+    return;
+  }
+
+  // First draw — build the queue
   if (!fc.queue.length) fc.queue = buildQueue(pool);
 
   // Pick next, skipping repeats of the current card if possible
@@ -410,7 +420,49 @@ function fcResetSession() {
   fcEls.weakList.innerHTML = '';
   fcEls.weakCount.textContent = '';
   Object.keys(sessionWeak).forEach(k => delete sessionWeak[k]);
+  // Restore hint text in case session-complete replaced it
+  const hintEl = fcEls.front.querySelector('.fc-hint');
+  if (hintEl) hintEl.innerHTML = 'Think about what this card does, then reveal';
   fc.drawCard();
+}
+
+// ─── Session complete ─────────────────────────────────────────────────────────
+
+function showSessionComplete(poolSize) {
+  fc.currentCard = null;
+  const { knew, unsure, blank } = fc.session;
+  const total = knew + unsure + blank;
+  const pct   = total > 0 ? Math.round((knew / total) * 100) : 0;
+  const weakCount = Object.keys(sessionWeak).length;
+
+  // Hide card and action buttons
+  fcEls.actionsFront.style.display = 'none';
+  fcEls.actionsBack.style.display  = 'none';
+  fcEls.card.classList.remove('is-flipped');
+
+  // Repurpose the card face to show the summary
+  fcEls.cardName.textContent = 'Session complete';
+  fcEls.cardMeta.textContent = '';
+  fcEls.art.src = '';
+  fcEls.artPlaceholder.classList.add('hidden');
+
+  // Replace the hint text with a summary
+  const hintEl = fcEls.front.querySelector('.fc-hint');
+  if (hintEl) {
+    hintEl.innerHTML =
+      `<div class="fc-session-summary">
+        <div class="fc-summary-stat fc-summary-knew">&#10003; ${knew} knew it</div>
+        <div class="fc-summary-stat fc-summary-unsure">&#126; ${unsure} unsure</div>
+        <div class="fc-summary-stat fc-summary-blank">&#215; ${blank} blank</div>
+        <div class="fc-summary-pct">${pct}% known across ${poolSize} cards</div>
+        ${weakCount > 0 ? `<div class="fc-summary-weak">${weakCount} card${weakCount === 1 ? '' : 's'} to review — see below</div>` : ''}
+        <button class="btn btn-primary fc-restart-btn" id="fc-restart-btn">Start again</button>
+      </div>`;
+    document.getElementById('fc-restart-btn').addEventListener('click', fcResetSession);
+  }
+
+  fcEls.progressFill.style.width  = '100%';
+  fcEls.progressLabel.textContent = `All ${poolSize} cards seen — session complete`;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
