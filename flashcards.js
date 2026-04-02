@@ -48,6 +48,7 @@ const fc = {
   setFilter:   '',        // set_id or '' for all
   currentCard: null,
   isFlipped:   false,
+  pass:        1,         // 1 = full pool, 2 = weak cards only
   session:     { knew: 0, unsure: 0, blank: 0, seen: 0 },
 
   // Persisted across sessions: { cardName: { knew, unsure, blank } }
@@ -92,10 +93,17 @@ function buildPool() {
   return [...names];
 }
 
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 // Build a single-pass queue: each card appears exactly once, but order is
 // weighted so weaker cards tend to appear earlier in the session.
 function buildQueue(pool) {
-  // Sort: blank > unsure > knew/unseen, then shuffle within each group
   const groups = { blank: [], unsure: [], other: [] };
   for (const name of pool) {
     const r = fc.ratings[name];
@@ -103,14 +111,6 @@ function buildQueue(pool) {
     else if (r && r.unsure > r.knew) groups.unsure.push(name);
     else groups.other.push(name);
   }
-  const shuffle = a => {
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  };
-  // Concat in priority order, then reverse so pop() gives us the front
   return [...shuffle(groups.other), ...shuffle(groups.unsure), ...shuffle(groups.blank)].reverse();
 }
 
@@ -254,8 +254,16 @@ fc.drawCard = function() {
     return;
   }
 
-  // Session complete — every card has been seen once
+  // End of pass 1 — check if we should start pass 2 or end the session
   if (!fc.queue.length && fc.session.seen > 0 && fc.session.seen >= buildPool().length) {
+    const weakCards = Object.keys(sessionWeak);
+    if (fc.pass === 1 && weakCards.length > 0) {
+      // Start pass 2: review only unsure/blank cards
+      fc.pass = 2;
+      fc.queue = shuffle([...weakCards]);
+      showPass2Banner(weakCards.length);
+      return;
+    }
     showSessionComplete(pool.length);
     return;
   }
@@ -388,11 +396,19 @@ Give a compact coaching note on this card — what it does, when you'd play it, 
 // ─── Progress ─────────────────────────────────────────────────────────────────
 
 function updateProgress(poolSize) {
-  const total   = poolSize;
-  const seen    = fc.session.seen;
-  const pct     = total > 0 ? Math.min(100, Math.round((seen / total) * 100)) : 0;
-  fcEls.progressFill.style.width  = pct + '%';
-  fcEls.progressLabel.textContent = `${seen} shown this session — pool: ${total} cards`;
+  if (fc.pass === 2) {
+    const weakTotal = Object.keys(sessionWeak).length;
+    const weakRemaining = fc.queue.length;
+    const weakSeen = weakTotal - weakRemaining;
+    const pct = weakTotal > 0 ? Math.min(100, Math.round((weakSeen / weakTotal) * 100)) : 0;
+    fcEls.progressFill.style.width  = pct + '%';
+    fcEls.progressLabel.textContent = `Pass 2 — reviewing ${weakSeen} of ${weakTotal} weak cards`;
+  } else {
+    const seen = fc.session.seen;
+    const pct  = poolSize > 0 ? Math.min(100, Math.round((seen / poolSize) * 100)) : 0;
+    fcEls.progressFill.style.width  = pct + '%';
+    fcEls.progressLabel.textContent = `Pass 1 — ${seen} of ${poolSize} cards`;
+  }
 }
 
 // ─── Weak card list ───────────────────────────────────────────────────────────
@@ -414,6 +430,7 @@ function updateWeakList(name, result) {
 function fcResetSession() {
   fc.session = { knew: 0, unsure: 0, blank: 0, seen: 0 };
   fc.queue   = [];
+  fc.pass    = 1;
   fcEls.knew.textContent   = '0';
   fcEls.unsure.textContent = '0';
   fcEls.blank.textContent  = '0';
@@ -428,6 +445,35 @@ function fcResetSession() {
 }
 
 // ─── Session complete ─────────────────────────────────────────────────────────
+
+function showPass2Banner(weakCount) {
+  fc.currentCard = null;
+  fcEls.actionsFront.style.display = 'none';
+  fcEls.actionsBack.style.display  = 'none';
+  fcEls.card.classList.remove('is-flipped');
+  fcEls.cardName.textContent = 'Pass 1 complete';
+  fcEls.cardMeta.textContent = '';
+  fcEls.artWrap.style.display = 'none';
+
+  const hintEl = fcEls.front.querySelector('.fc-hint');
+  if (hintEl) {
+    hintEl.innerHTML =
+      `<div class="fc-session-summary">
+        <div class="fc-summary-pct">Reviewing ${weakCount} card${weakCount === 1 ? '' : 's'} you found tricky</div>
+        <div class="fc-summary-weak">Unsure and blank cards come up again now.</div>
+        <button class="btn btn-primary fc-restart-btn" id="fc-pass2-btn">Start pass 2</button>
+      </div>`;
+    document.getElementById('fc-pass2-btn').addEventListener('click', () => {
+      const hintEl2 = fcEls.front.querySelector('.fc-hint');
+      if (hintEl2) hintEl2.innerHTML = 'Think about what this card does, then reveal';
+      fcEls.artWrap.style.display = '';
+      fc.drawCard();
+    });
+  }
+
+  fcEls.progressFill.style.width  = '100%';
+  fcEls.progressLabel.textContent = `Pass 1 complete — ${weakCount} card${weakCount === 1 ? '' : 's'} to review`;
+}
 
 function showSessionComplete(poolSize) {
   fc.currentCard = null;
