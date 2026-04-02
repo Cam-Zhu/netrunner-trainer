@@ -764,7 +764,7 @@ kbd {
   counter-increment: step;
 }
 .rules-steps li::before {
-  content: counter(step) '.';
+  content: counter(step, lower-alpha) '.';
   position: absolute; left: 0;
   font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-mute);
 }
@@ -780,6 +780,10 @@ kbd {
 /* Supplementary boxes */
 .rules-supp-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+.rules-steps--numbered li::before {
+  content: counter(step) '.';
 }
 .rules-supp {
   background: var(--bg-card); border: 1px solid var(--border);
