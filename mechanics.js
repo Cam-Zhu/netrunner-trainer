@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // mechanics.js  —  Mechanics glossary tab
 // Two entry types: "mechanic" (rules-grounded) and "concept" (named strategy vocab)
+// Rules cross-referenced against NSG Comprehensive Rules v26.03
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MECHANICS_DATA = [
@@ -12,8 +13,8 @@ const MECHANICS_DATA = [
     term: "Run Structure",
     type: "mechanic",
     tier: 0,
-    short: "The sequence of steps that define how a run progresses from initiation to end.",
-    detail: "A run moves through defined phases: Initiation → Approach → Encounter (if ice is rezzed) → Pass → next ice or servers. Each phase has specific windows for paid abilities, jack out timing, and trigger checks. Getting this sequence wrong causes cascading errors with replacement effects, mid-run Corp abilities, and run-result triggers.",
+    short: "The sequence of phases that define how a run progresses from initiation to end.",
+    detail: "A run moves through six defined phases: Initiation → Approach Ice → Encounter Ice (if ice is rezzed) → Movement → Success → Run Ends. Each phase has specific windows for paid abilities, rezzing, jack out timing, and trigger checks. The Movement Phase handles passing ice and moving inward; the Success Phase declares the run successful and initiates a breach. Getting this sequence wrong causes cascading errors with replacement effects, mid-run Corp abilities, and run-result triggers.",
     seeAlso: ["paid-ability-windows", "jack-out", "successful-run"],
     rulesLink: null,
   },
@@ -22,8 +23,8 @@ const MECHANICS_DATA = [
     term: "Paid Ability Windows",
     type: "mechanic",
     tier: 0,
-    short: "Specific moments during a run when both players may spend credits to trigger abilities.",
-    detail: "Paid ability windows occur before encountering ice, during an encounter, and after passing ice. Both players get a window; the Runner acts first, then the Corp, and the window closes when both players pass. Paid abilities are distinct from conditional abilities — only effects explicitly usable 'during a run' or 'when encountering ice' are legal in these windows.",
+    short: "Specific moments during a run when players may trigger paid abilities.",
+    detail: "Paid ability windows open throughout the game — during turns and during runs. The active player receives priority first, then both players alternate, with the window closing when both players pass consecutively. During the Corp's turn, the Corp acts first; during the Runner's turn, the Runner acts first. Within a run, specific windows allow rezzing ice (Approach Phase only) or scoring agendas; other windows are paid-ability only. Paid abilities are distinct from conditional abilities — the latter fire automatically at checkpoints rather than being chosen by a player.",
     seeAlso: ["run-structure", "trigger-types"],
     rulesLink: null,
   },
@@ -33,7 +34,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 0,
     short: "The rules that determine when and in what order card effects fire.",
-    detail: "Triggers are either mandatory (must fire) or optional (may fire). Key words: 'When' fires once on the specific event, 'Whenever' fires each time the condition occurs, 'If' is a conditional check, 'Instead' is a replacement. When multiple triggers happen simultaneously, the active player chooses the resolution order for their own triggers.",
+    detail: "Triggers are either mandatory (must fire) or optional (may fire). When conditional abilities meet their trigger conditions, a reaction window opens and both players alternate resolving their pending abilities, starting with the active player. Mandatory abilities must be triggered before a player can pass. When multiple triggers happen simultaneously, each player orders and resolves their own pending abilities in turn. Key words: 'when' fires once on the specific event; 'whenever' fires each time the condition occurs; abilities with 'instead' are replacement effects that override normal resolution.",
     seeAlso: ["paid-ability-windows", "replacement-effects"],
     rulesLink: null,
   },
@@ -63,7 +64,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "A persistent negative Runner status that enables Corp punishment effects.",
-    detail: "Tags remain on the Runner until actively removed (1 click + 2 credits per tag during the Runner's action phase). While tagged, the Corp can use tag-conditional abilities including resource destruction and damage operations. Tags are checked continuously — any tag-conditional ability is live the moment a tag exists. See also: Floating Tags, Tag Punishment.",
+    detail: "Tags remain on the Runner until actively removed (1 click + 2 credits per tag, as an action during the Runner's action phase). While tagged, the Corp can use tag-conditional abilities including resource destruction (click + 2 credits as a basic action) and damage operations. Tags are checked continuously — any tag-conditional ability is live the moment a tag exists. See also: Floating Tags, Tag Punishment.",
     seeAlso: ["tag-punishment", "floating-tags", "tag-removal-windows"],
     rulesLink: null,
   },
@@ -93,7 +94,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "The specific moments when the Runner can legally remove tags.",
-    detail: "Tags can be removed during the Runner's action phase: spend 1 click and 2 credits to remove 1 tag. This cannot be done during runs, during the Corp's turn, or in response to a punishment being played. Misunderstanding this timing leads to illegal plays or fatal delays.",
+    detail: "Tags can be removed during the Runner's action phase: spend 1 click and 2 credits as a basic action to remove 1 tag. This cannot be done during runs, during the Corp's turn, or in response to a punishment being played. Misunderstanding this timing leads to illegal plays or fatal delays.",
     seeAlso: ["tags", "floating-tags"],
     rulesLink: null,
   },
@@ -103,8 +104,8 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "Damage that randomly trashes cards from the Runner's grip, representing digital or neural harm.",
-    detail: "For each point of net damage, the Runner randomly discards one card from their hand. Net damage ignores credits and board state entirely — it attacks the Runner's options directly. It cannot be reduced by spending credits. Prevention requires specific installed cards. If the Runner is reduced to zero cards in grip by damage, they flatline.",
-    seeAlso: ["meat-damage", "brain-damage", "flatline-check", "damage-prevention"],
+    detail: "For each point of net damage, one card is randomly trashed from the Runner's grip. Multiple damage resolves simultaneously — the cards are all chosen and trashed at once. Net damage ignores credits and board state entirely. It cannot be reduced by spending credits; prevention requires specific installed cards. If the Runner suffers more damage than they have cards in their grip, they flatline immediately.",
+    seeAlso: ["meat-damage", "core-damage", "flatline-check", "damage-prevention"],
     rulesLink: null,
   },
   {
@@ -113,17 +114,17 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "Physical damage that trashes cards from grip — the primary flatline vector in Standard.",
-    detail: "Meat damage works identically to net damage in resolution (randomly trash from grip) but is triggered by different cards, typically tag-punishment operations. It is the most common kill mechanism in Standard. Prevention is type-specific — net damage prevention does not stop meat damage. Tags frequently enable meat damage operations.",
-    seeAlso: ["net-damage", "brain-damage", "tag-punishment", "flatline-check"],
+    detail: "Meat damage works identically to net damage in resolution: one card randomly trashed from grip per point, all simultaneously. It is triggered by different cards, typically tag-punishment operations, and is the most common kill mechanism in Standard. Prevention is type-specific — net damage prevention does not stop meat damage. Tags frequently enable meat damage operations.",
+    seeAlso: ["net-damage", "core-damage", "tag-punishment", "flatline-check"],
     rulesLink: null,
   },
   {
-    id: "brain-damage",
-    term: "Brain Damage",
+    id: "core-damage",
+    term: "Core Damage",
     type: "mechanic",
     tier: 1,
     short: "Permanent damage that trashes cards from grip AND reduces the Runner's maximum hand size.",
-    detail: "Brain damage is cumulative and irreversible. Each point reduces max hand size by 1 permanently, making all future damage more lethal. A Runner with 2 brain damage has a max hand of 3 — half the normal threshold before flatline. Brain damage compounds other threats and cannot be undone in Standard.",
+    detail: "Core damage (sometimes called 'brain damage' on older cards — the terms are interchangeable) is cumulative and irreversible. Each point randomly trashes a card from the grip and permanently reduces max hand size by 1. A Runner with 2 core damage has a max hand of 3 — half the normal threshold before flatline. Core damage compounds other threats and cannot be undone in Standard.",
     seeAlso: ["net-damage", "meat-damage", "flatline-check"],
     rulesLink: null,
   },
@@ -132,9 +133,9 @@ const MECHANICS_DATA = [
     term: "Flatline Check",
     type: "mechanic",
     tier: 1,
-    short: "The Runner immediately loses if required to take damage while at zero cards in grip.",
-    detail: "The flatline check happens during damage resolution, not after. If the Runner must take 3 damage and has 2 cards left, the game ends mid-resolution — the remaining damage doesn't matter. This makes some losses feel sudden but they are entirely rules-correct. Hand size management is active survival.",
-    seeAlso: ["net-damage", "meat-damage", "brain-damage"],
+    short: "The Runner immediately loses if they suffer more damage than they have cards in grip.",
+    detail: "The flatline condition is checked when damage resolves: if the Runner suffers more damage than they have cards in their grip, they lose. Multiple damage cards are randomly chosen and trashed simultaneously — there is no one-at-a-time resolution. The game ends when the damage is resolved if the Runner had fewer cards than the total damage dealt. Additionally, if the Runner's maximum hand size is less than 0 at the start of their discard phase, they are also flatlined.",
+    seeAlso: ["net-damage", "meat-damage", "core-damage"],
     rulesLink: null,
   },
   {
@@ -143,7 +144,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "Effects that stop or reduce incoming damage before it resolves.",
-    detail: "Prevention effects are type-specific — a card that prevents net damage does nothing against meat damage. Prevention reduces damage before it resolves, while replacement effects change what happens instead. Layered kill attempts often exploit this by mixing damage types to bypass partial defenses.",
+    detail: "Prevention effects are type-specific — a card that prevents net damage does nothing against meat damage. Prevention reduces the damage value before it resolves, using interrupt abilities triggered during the interrupt window. Layered kill attempts often exploit this by mixing damage types to bypass partial defenses.",
     seeAlso: ["net-damage", "meat-damage", "hybrid-damage"],
     rulesLink: null,
   },
@@ -153,7 +154,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 2,
     short: "Kill lines that combine multiple damage types to bypass type-specific prevention.",
-    detail: "Hybrid damage sequences combine net, meat, or brain damage in one effect or across a turn. Because prevention is type-specific, a Runner protected against meat damage may be unprotected against the net damage component. Understanding which combination a Corp deck uses determines which prevention is actually worth installing.",
+    detail: "Hybrid damage sequences combine net, meat, or core damage in one effect or across a turn. Because prevention is type-specific, a Runner protected against meat damage may be unprotected against the net damage component. Understanding which combination a Corp deck uses determines which prevention is actually worth installing.",
     seeAlso: ["net-damage", "meat-damage", "damage-prevention"],
     rulesLink: null,
   },
@@ -163,7 +164,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "Using icebreaker abilities to prevent individual subroutines from resolving.",
-    detail: "Breaking a subroutine stops its effect for that encounter only — the ice remains rezzed and will fire again next run. Breaking does not bypass or disable the ice. Each subroutine must be broken individually unless a breaker specifies otherwise. If any subroutine is not broken, it resolves.",
+    detail: "Breaking a subroutine stops its effect for that encounter only — the ice remains rezzed and will fire again next run. Breaking does not bypass or disable the ice. Each subroutine must be broken individually unless a breaker specifies otherwise. If any subroutine is left unbroken, the Corp resolves it. Icebreakers can only use interface abilities if their strength is equal to or greater than the encountered ice's strength.",
     seeAlso: ["bypassing-ice", "derezzing-ice", "avoiding-encounters"],
     rulesLink: null,
   },
@@ -172,8 +173,8 @@ const MECHANICS_DATA = [
     term: "Bypassing Ice",
     type: "mechanic",
     tier: 1,
-    short: "Passing ice without encountering it, skipping all subroutines and encounter abilities.",
-    detail: "Bypass is one of the most powerful ice interaction types. Bypassed ice is neither broken nor interacted with — subroutines never fire, encounter abilities never trigger, and the Runner proceeds as if the ice wasn't there. Bypass effects typically specify a cost or condition and apply to specific ice types or situations.",
+    short: "Passing ice without encountering it — the Encounter Ice Phase is aborted entirely.",
+    detail: "When the Runner bypasses a piece of ice, the Encounter Ice Phase is aborted and the Runner immediately proceeds to pass that ice. Subroutines are neither broken nor resolved, and encounter abilities do not trigger. Bypass effects typically specify a cost or condition and apply to specific ice types or situations. Note: bypass still requires the Runner to have approached the ice first — it skips the encounter, not the approach.",
     seeAlso: ["breaking-subroutines", "derezzing-ice", "avoiding-encounters"],
     rulesLink: null,
   },
@@ -183,7 +184,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "Turning rezzed ice facedown, disabling its abilities until rezzed again.",
-    detail: "Derezzing does not remove ice from the server — it returns it to an unrezzed state, forcing the Corp to spend rez cost again. This resets the Corp's investment and can open future scoring windows if the Corp runs out of credits. Unrezzed ice can still be approached but the Runner may pass it without encountering.",
+    detail: "Derezzing does not remove ice from the server — it returns it to an unrezzed state, forcing the Corp to spend the rez cost again if they want it active. This resets the Corp's investment and can open future scoring windows if the Corp runs out of credits. An unrezzed piece of ice can still be approached during a run, but the Runner will not encounter it unless the Corp rezzes it during the Approach Ice Phase.",
     seeAlso: ["breaking-subroutines", "bypassing-ice"],
     rulesLink: null,
   },
@@ -193,7 +194,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "Preventing an ice encounter from occurring entirely, before subroutines become relevant.",
-    detail: "Avoiding is distinct from bypassing: avoid effects stop the encounter before it starts, while bypass effects let it start and then skip past. The difference matters for cards that trigger 'when the Runner encounters ice' — bypass triggers these, avoid does not. Few cards grant avoidance; it's rarer and often more powerful than bypass.",
+    detail: "This is informal community vocabulary, not a formal rules category. In practice, it refers to effects that prevent the Runner from being placed in an encounter at all — distinct from bypass, which aborts an encounter that has already begun. The rules distinction matters: some 'when the Runner encounters ice' abilities may trigger on bypass but not on effects that prevent the encounter from starting. The precise wording of each card determines whether an effect creates a bypass or prevents the encounter.",
     seeAlso: ["bypassing-ice", "breaking-subroutines"],
     rulesLink: null,
   },
@@ -203,7 +204,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 2,
     short: "Effects that change what happens instead of the normal game action.",
-    detail: "Replacement effects use language like 'instead of ending the run' or 'instead of taking damage'. They override normal resolution entirely — the replaced event does not happen. Multiple replacement effects can interact, and their precedence must be resolved carefully. Understanding replacement effects is what separates clean rules knowledge from actual competitive play.",
+    detail: "Replacement effects use the word 'instead' in their text. They override normal resolution entirely — the replaced event does not happen. They are applied automatically when the relevant instruction becomes imminent, before players receive priority in the interrupt window. Multiple replacement effects can interact; if they apply to a targeted card, that card's controller chooses the order. Understanding replacement effects is what separates clean rules knowledge from actual competitive play.",
     seeAlso: ["trigger-types", "damage-prevention"],
     rulesLink: null,
   },
@@ -213,7 +214,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 2,
     short: "Counters placed on cards to enable agenda scoring or power other abilities.",
-    detail: "Placing an advancement counter costs 1 click and 1 credit. Agendas require a specific number to score. Non-agenda cards (assets, ice, upgrades) can also be advanced, creating ambiguity that forces Runners to respect threats that may not be agendas. Counters persist until removed and are checked continuously by conditional abilities.",
+    detail: "The Corp's basic action to advance a card costs 1 click and 1 credit, placing one advancement counter on an installed card. Card abilities can also place or move advancement counters without this cost — that is not the same as advancing a card for rules purposes. Agendas require a specific number of advancement counters to score. Non-agenda cards can also be advanced if their text says so, creating ambiguity that forces Runners to respect threats that may not be agendas.",
     seeAlso: ["fast-advance", "score-windows", "advancing-non-agendas"],
     rulesLink: null,
   },
@@ -223,7 +224,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 2,
     short: "Placing advancement counters on assets, ice, or upgrades to create ambiguity or power effects.",
-    detail: "The Corp can advance any card that says 'you can advance this card' or has an ability that triggers on advancement. This mechanic creates uncertainty: an advanced card in a remote could be an agenda or a trap. Runners must decide whether to check it (run) or respect it (assume dangerous) — both can be wrong.",
+    detail: "The Corp can advance any installed card that says 'you can advance this card' or has an ability that triggers on advancement. This mechanic creates uncertainty: an advanced card in a remote could be an agenda or a trap. Runners must decide whether to check it (run) or respect it (assume dangerous) — both can be wrong.",
     seeAlso: ["advancement-counters"],
     rulesLink: null,
   },
@@ -233,7 +234,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 2,
     short: "Scoring an agenda without building a protected remote, typically in a single turn from hand.",
-    detail: "Fast advance compresses scoring into a single turn: install the agenda and advance it to completion using cards that provide extra advancement or allow scoring from hand. This denies the Runner any window to steal. Fast advance punishes Runners who rely purely on remote pressure and ignore HQ.",
+    detail: "Fast advance compresses scoring into a single turn: install the agenda and advance it to completion using cards that provide extra advancement or allow scoring from hand. Scoring an agenda does not cost a click — it is done during a paid ability window. Fast advance denies the Runner any window to steal and punishes Runners who rely purely on remote pressure and ignore HQ.",
     seeAlso: ["advancement-counters", "score-windows"],
     rulesLink: null,
   },
@@ -252,8 +253,8 @@ const MECHANICS_DATA = [
     term: "Bad Publicity",
     type: "mechanic",
     tier: 1,
-    short: "A persistent Corp drawback giving the Runner 1 recurring credit per point to spend during runs.",
-    detail: "Each bad publicity gives the Runner 1 recurring credit usable only during runs (breaking subs, boosting breaker strength, paying trash costs mid-run, resisting traces during runs). It refreshes every run. It cannot be spent outside runs. A single bad publicity over a long game can represent 10+ credits of effective value — more dangerous than giving the Runner credits directly, because it pays at exactly the moment it's most useful.",
+    short: "A persistent Corp drawback that gives the Runner extra credits to spend during each run.",
+    detail: "Each bad publicity counter causes the Runner to add 1 credit to their bad publicity fund at the start of each run (step 6.9.1b). These credits are kept in a dedicated fund separate from the Runner's credit pool — they are not recurring credits. The Runner can spend them freely during that run, and any unspent credits are returned to the bank when the run ends (step 6.9.6b). Bad publicity does not stack between runs; credits are added fresh each run and any leftovers are lost. A single bad publicity over a long game can represent significant effective value — it pays at exactly the moment it's most useful.",
     seeAlso: ["recurring-credits"],
     rulesLink: null,
   },
@@ -262,8 +263,8 @@ const MECHANICS_DATA = [
     term: "Recurring Credits",
     type: "mechanic",
     tier: 1,
-    short: "Credits that refresh automatically and can only be spent on specific things.",
-    detail: "Recurring credits reset at the start of each turn or run (depending on the source) and can only be spent on the uses specified by the card. They cannot be banked or transferred. Bad publicity gives run-specific recurring credits. Icebreaker cards often provide recurring credits for strength boosts or breaking specific subtypes. The spending restriction is what keeps them balanced.",
+    short: "Credits placed on a card that refill automatically each turn and can only be spent on specific things.",
+    detail: "When a card has recurring credits, those credits are placed on it when it first becomes active. At the start of each player's turn (before other turn-beginning abilities), recurring credits refill up to the card's stated amount — they do not accumulate beyond that number. They can only be spent as specified by the card (e.g. 'to pay for icebreaker abilities' or 'during traces'). The spending restriction is what keeps them balanced. Bad publicity credits are distinct — they use a separate bad publicity fund, not a recurring credit mechanic.",
     seeAlso: ["bad-publicity"],
     rulesLink: null,
   },
@@ -272,8 +273,8 @@ const MECHANICS_DATA = [
     term: "Purge",
     type: "mechanic",
     tier: 2,
-    short: "A Corp action (3 clicks) that removes all virus counters from all cards.",
-    detail: "Purging costs the Corp their entire turn (3 clicks as a single action) but globally resets all virus counters everywhere — installed programs, Corp cards, anywhere. This is the primary counterplay to virus-based Runner strategies like Conduit or Fermenter. The cost is steep but non-negotiable when virus pressure becomes lethal.",
+    short: "A Corp basic action costing 3 clicks that removes all virus counters from all cards.",
+    detail: "Purging is a single basic action with a cost of 3 clicks (the Corp's full allotment). It globally removes all virus counters from every card in play. If the Corp has additional clicks from card effects, they may still act after purging. This is the primary counterplay to virus-based Runner strategies. The cost is steep but non-negotiable when virus pressure becomes lethal.",
     seeAlso: ["custom-counters"],
     rulesLink: null,
   },
@@ -283,7 +284,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 2,
     short: "A simultaneous secret bid (0, 1, or 2 credits) where matching or differing bids trigger different outcomes.",
-    detail: "Both players secretly choose 0, 1, or 2 credits, reveal simultaneously, and both lose whatever they bid. The card specifies what happens if bids match vs differ. Psi games are information and credit-pressure tools — they reward pattern disruption and punish predictability. Both players always pay their bid, win or lose. The most common rules error is forgetting this.",
+    detail: "Both players secretly choose 0, 1, or 2 credits, reveal simultaneously, and both spend whatever they bid. The card specifies what happens if bids match vs differ. Psi games are information and credit-pressure tools — they reward pattern disruption and punish predictability. Both players always pay their bid regardless of outcome. The most common rules error is forgetting that both players pay.",
     seeAlso: [],
     rulesLink: null,
   },
@@ -293,7 +294,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 2,
     short: "Revealing a facedown Corp card without accessing it — no on-access effects, no steal window.",
-    detail: "Expose lets the Runner see a card's identity without triggering access consequences. Trash costs do not apply, on-access abilities do not fire, and the Runner cannot steal an agenda through expose. This distinction is critical: expose is information only. After exposing, the card returns facedown. Useful for identifying traps before committing to a run.",
+    detail: "Expose lets the Runner see a card's identity without triggering access consequences. Only installed, unrezzed cards can be exposed. Trash costs do not apply, on-access abilities do not fire, and the Runner cannot steal an agenda through expose. After exposing, the card returns to its previous facedown state. Useful for identifying traps before committing to a run.",
     seeAlso: ["steal-vs-score"],
     rulesLink: null,
   },
@@ -303,7 +304,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 1,
     short: "Steal is when the Runner takes an agenda; Score is when the Corp claims one. Many effects care which happened.",
-    detail: "These are mechanically distinct events. Score: Corp advances an agenda to the required threshold and uses a click to score it. Steal: Runner accesses an agenda and takes it. Many card effects trigger only on one — 'when you score' abilities do not fire when the Corp's agenda is stolen, and vice versa. Misplaying this distinction is a common competitive error.",
+    detail: "These are mechanically distinct events. Score: the Corp has an agenda with enough advancement counters and scores it during a paid ability window — this does not cost a click and is not an action. Steal: the Runner accesses an agenda and takes it (the Runner generally cannot decline to steal). Many card effects trigger only on one — 'when you score' abilities do not fire when the Corp's agenda is stolen, and vice versa. Misplaying this distinction is a common competitive error.",
     seeAlso: ["expose"],
     rulesLink: null,
   },
@@ -312,8 +313,8 @@ const MECHANICS_DATA = [
     term: "Hosting",
     type: "mechanic",
     tier: 2,
-    short: "Placing a card on another card, changing how it is protected, interacted with, or trashed.",
-    detail: "Hosted cards exist in a different zone state — they are not installed normally and have different interaction rules depending on what hosts them. Trashing the host often trashes hosted cards. Hosted cards may be immune to some effects that target installed cards. The rules for what can host what are defined on the relevant cards.",
+    short: "Placing a card or counter on another card, creating a host relationship.",
+    detail: "Hosted objects exist in the same zone as their host. A host relationship can only be created by a card ability — any card in an eligible location can act as a host, but the relationship must be explicitly permitted. Trashing the host causes all hosted objects to be trashed at the next checkpoint (this cannot be prevented). A hosted card may be installed or not installed; the two states have different rules implications. Hosting is not transitive: if A is hosted on B, and B on C, A is not considered hosted on C.",
     seeAlso: [],
     rulesLink: null,
   },
@@ -333,7 +334,7 @@ const MECHANICS_DATA = [
     type: "mechanic",
     tier: 0,
     short: "The Corp draws 1 card at the start of their turn; this is mandatory and cannot be skipped.",
-    detail: "The Corp must draw one card at the start of every turn. This is a rules obligation, not a choice. It interacts with R&D density (running out of cards = Corp loses), hand size limits, and certain Runner denial effects. If the Corp cannot draw (empty R&D), they lose immediately.",
+    detail: "The Corp must draw one card during their Draw Phase (step 5.6.1e). This is a rules obligation, not a choice, and does not cost a click. It interacts with R&D density — if the Corp must draw and R&D is empty, the Runner wins immediately. This makes agenda-dense R&D slightly more dangerous to the Corp as the game progresses.",
     seeAlso: [],
     rulesLink: null,
   },
@@ -342,8 +343,8 @@ const MECHANICS_DATA = [
     term: "Jack Out",
     type: "mechanic",
     tier: 0,
-    short: "The Runner voluntarily ends a run before completion, at specific legal windows.",
-    detail: "The Runner can jack out before encountering any piece of ice (in the approach phase). Once an encounter begins, the Runner cannot jack out unless a card effect says otherwise. Jacking out ends the run as unsuccessful. Some Corp cards trigger specifically 'if the Runner jacks out', making the decision to abort a run potentially punishable.",
+    short: "The Runner voluntarily ends a run during the Movement Phase, after passing a piece of ice.",
+    detail: "The Runner can jack out during step 6.9.4c of the Movement Phase — after passing a piece of ice, before moving to the next position. If there is no ice protecting the server, the Runner can jack out before approaching the server. The Runner cannot jack out during an encounter or during the Approach Ice Phase. Jacking out ends the run as unsuccessful. Some Corp cards trigger specifically if the Runner jacks out, making the abort decision potentially punishable.",
     seeAlso: ["run-structure", "successful-run"],
     rulesLink: null,
   },
@@ -352,8 +353,8 @@ const MECHANICS_DATA = [
     term: "Successful Run",
     type: "mechanic",
     tier: 0,
-    short: "A run that reaches the server and the Runner gains access — triggers 'if successful' abilities.",
-    detail: "A run is successful when the Runner passes all ice, the Corp declines to rez or the Runner bypasses remaining ice, and the Runner accesses cards. 'If successful' abilities trigger at this point. A run that ends before access (jacked out, ended by subroutine, or replaced) is not successful and these abilities do not fire.",
+    short: "A run that reaches the Success Phase, triggering 'if successful' abilities and granting a breach.",
+    detail: "A run is declared successful when it reaches step 6.9.5a of the Success Phase — this happens after the Runner passes all ice and approaches the server. The run being successful is what triggers 'if successful' abilities and grants the Runner a breach of the attacked server. Accessing cards is a consequence of the breach, not a condition of success. A run that ends before reaching the Success Phase (jacked out, ended by subroutine) is not successful and these abilities do not fire.",
     seeAlso: ["run-structure", "jack-out"],
     rulesLink: null,
   },
@@ -647,7 +648,6 @@ function initMechanics() {
         activeId = btn.dataset.id;
         showDetail(activeId);
         renderList(getFiltered(searchInput.value, activeFilter));
-        // scroll list item into view
         setTimeout(() => {
           const active = resultsList.querySelector(".mech-list-item.active");
           if (active) active.scrollIntoView({ block: "nearest" });
@@ -659,14 +659,12 @@ function initMechanics() {
   function refresh() {
     const entries = getFiltered(searchInput.value, activeFilter);
     renderList(entries);
-    // if active entry got filtered out, clear detail
     if (activeId && !entries.find((e) => e.id === activeId)) {
       activeId = null;
       detailPanel.innerHTML = `<div class="mech-detail-empty">Select a term to see its definition.</div>`;
     }
   }
 
-  // Filter buttons
   filterBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       filterBtns.forEach((b) => b.classList.remove("active"));
@@ -676,10 +674,8 @@ function initMechanics() {
     });
   });
 
-  // Search input
   searchInput.addEventListener("input", refresh);
 
-  // Keyboard shortcut: "/" focuses search
   document.addEventListener("keydown", (e) => {
     if (
       e.key === "/" &&
@@ -691,9 +687,7 @@ function initMechanics() {
     }
   });
 
-  // Initial render
   refresh();
-  // Auto-select first entry
   const first = getFiltered("", "all")[0];
   if (first) {
     activeId = first.id;
@@ -702,7 +696,6 @@ function initMechanics() {
   }
 }
 
-// Called from app.js page switcher when mechanics tab becomes visible
 window.initMechanicsOnce = (() => {
   let done = false;
   return () => {
