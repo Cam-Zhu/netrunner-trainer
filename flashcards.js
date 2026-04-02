@@ -37,14 +37,6 @@ document.querySelectorAll('.page-tab').forEach(tab => {
   tab.addEventListener('click', () => switchPage(tab.dataset.page));
 });
 
-// Read hash on load — allows deep links like runnerstoolkit.net/#rules
-(function() {
-  const hash = window.location.hash.replace('#', '').trim();
-  if (hash && VALID_PAGES.includes(hash)) {
-    switchPage(hash);
-  }
-})();
-
 // ─── Flashcard state ──────────────────────────────────────────────────────────
 
 const STORAGE_KEY = 'nrtrainer_fc_ratings';
@@ -442,3 +434,12 @@ function formatMeta(data, full) {
 function escFc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+// ─── Deep link init ───────────────────────────────────────────────────────────
+// Must run last — after fc, ch, and all functions are defined.
+(function() {
+  const hash = window.location.hash.replace('#', '').trim();
+  if (hash && VALID_PAGES.includes(hash)) {
+    switchPage(hash);
+  }
+})();
