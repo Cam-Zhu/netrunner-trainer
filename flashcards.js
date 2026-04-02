@@ -255,7 +255,7 @@ fc.drawCard = function() {
   }
 
   // Session complete — every card has been seen once
-  if (!fc.queue.length && fc.session.seen > 0) {
+  if (!fc.queue.length && fc.session.seen > 0 && fc.session.seen >= buildPool().length) {
     showSessionComplete(pool.length);
     return;
   }
@@ -420,9 +420,10 @@ function fcResetSession() {
   fcEls.weakList.innerHTML = '';
   fcEls.weakCount.textContent = '';
   Object.keys(sessionWeak).forEach(k => delete sessionWeak[k]);
-  // Restore hint text in case session-complete replaced it
+  // Restore hint text and art wrap in case session-complete replaced them
   const hintEl = fcEls.front.querySelector('.fc-hint');
   if (hintEl) hintEl.innerHTML = 'Think about what this card does, then reveal';
+  fcEls.artWrap.style.display = '';
   fc.drawCard();
 }
 
@@ -443,8 +444,7 @@ function showSessionComplete(poolSize) {
   // Repurpose the card face to show the summary
   fcEls.cardName.textContent = 'Session complete';
   fcEls.cardMeta.textContent = '';
-  fcEls.art.src = '';
-  fcEls.artPlaceholder.classList.add('hidden');
+  fcEls.artWrap.style.display = 'none';
 
   // Replace the hint text with a summary
   const hintEl = fcEls.front.querySelector('.fc-hint');
