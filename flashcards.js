@@ -1,29 +1,49 @@
 // ─── Page navigation ─────────────────────────────────────────────────────────
 
+const VALID_PAGES = ['start', 'decks', 'trainer', 'flashcards', 'challenge', 'rules', 'mechanics'];
+
+function switchPage(page) {
+  // Validate — fall back to start if unknown or hidden tab
+  const tabEl = document.querySelector(`.page-tab[data-page="${page}"]`);
+  if (!tabEl || !VALID_PAGES.includes(page)) page = 'start';
+
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+
+  document.getElementById('page-start').style.display      = page === 'start'      ? '' : 'none';
+  document.getElementById('page-decks').style.display      = page === 'decks'      ? '' : 'none';
+  document.getElementById('page-trainer').style.display    = page === 'trainer'    ? '' : 'none';
+  document.getElementById('page-flashcards').style.display = page === 'flashcards' ? '' : 'none';
+  document.getElementById('page-challenge').style.display  = page === 'challenge'  ? '' : 'none';
+  document.getElementById('page-rules').style.display      = page === 'rules'      ? '' : 'none';
+  document.getElementById('page-mechanics').style.display  = page === 'mechanics'  ? '' : 'none';
+
+  if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
+  if (page === 'challenge') ch.renderLevelMap();
+  if (page === 'mechanics') window.initMechanicsOnce();
+  if (page === 'rules') window.initRulesOnce();
+
+  // Update URL hash so the link is bookmarkable / shareable
+  history.replaceState(null, '', page === 'start' ? ' ' : `#${page}`);
+
+  if (tabEl) tabEl.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+
+  if (typeof window.plausible !== 'undefined') {
+    window.plausible('Tab switch', { props: { tab: page } });
+  }
+}
+
 document.querySelectorAll('.page-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    const page = tab.dataset.page;
-    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('page-start').style.display      = page === 'start'      ? '' : 'none';
-    document.getElementById('page-decks').style.display      = page === 'decks'      ? '' : 'none';
-    document.getElementById('page-trainer').style.display    = page === 'trainer'    ? '' : 'none';
-    document.getElementById('page-flashcards').style.display = page === 'flashcards' ? '' : 'none';
-    document.getElementById('page-challenge').style.display  = page === 'challenge'  ? '' : 'none';
-    document.getElementById('page-rules').style.display      = page === 'rules'      ? '' : 'none';
-    document.getElementById('page-mechanics').style.display  = page === 'mechanics'  ? '' : 'none';
-    if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
-    if (page === 'challenge') ch.renderLevelMap();
-    if (page === 'mechanics') window.initMechanicsOnce();
-    if (page === 'rules') window.initRulesOnce();
-    // Scroll active tab into view on mobile
-    tab.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
-    // Plausible analytics
-    if (typeof window.plausible !== 'undefined') {
-      window.plausible('Tab switch', { props: { tab: page } });
-    }
-  });
+  tab.addEventListener('click', () => switchPage(tab.dataset.page));
 });
+
+// Read hash on load — allows deep links like runnerstoolkit.net/#rules
+(function() {
+  const hash = window.location.hash.replace('#', '').trim();
+  if (hash && VALID_PAGES.includes(hash)) {
+    switchPage(hash);
+  }
+})();
 
 // ─── Flashcard state ──────────────────────────────────────────────────────────
 
