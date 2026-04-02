@@ -764,7 +764,7 @@ kbd {
   counter-increment: step;
 }
 .rules-steps li::before {
-  content: counter(step, lower-alpha) '.';
+  content: counter(step) '.';
   position: absolute; left: 0;
   font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-mute);
 }
