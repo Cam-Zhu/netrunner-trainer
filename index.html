@@ -34,6 +34,7 @@
     -->
     <button class="page-tab" data-page="flashcards">Free play</button>
     <button class="page-tab" data-page="challenge">Challenge</button>
+    <button class="page-tab" data-page="rules">Rules</button>
     <!-- Mechanics hidden pending glossary review
     <button class="page-tab" data-page="mechanics">Mechanics</button>
     -->
@@ -86,6 +87,11 @@
         <div class="sh-tab-card">
           <div class="sh-tab-name">Challenge</div>
           <p class="sh-tab-body">A levelled progression through the Standard card pool. Five levels follow the sets in order: System Gateway → Elevation → Ashes Cycle → Borealis Cycle → Liberation Cycle. Each level offers two modes — <strong>Set focus</strong> drills only that level's new cards; <strong>Cumulative</strong> drills all cards up to and including that level. Pass a level by correctly identifying 80% of its cards. Levels unlock in sequence and your progress is saved locally.</p>
+        </div>
+
+        <div class="sh-tab-card">
+          <div class="sh-tab-name">Rules</div>
+          <p class="sh-tab-body">An interactive rules reference covering turn structure and run structure. <strong>Turn structure</strong> shows the Corp and Runner turn phases side by side. <strong>Run structure</strong> is an interactive flowchart — tap YES or NO at each decision point to follow the path of a run in real time. Useful for new players learning why a run plays out the way it does.</p>
         </div>
 
       </div>
@@ -339,6 +345,137 @@
   <script src="flashcards.js"></script>
   <script src="challenge.js"></script>
 
+  <!-- PAGE: RULES -->
+  <main id="page-rules" style="display:none;">
+
+    <section class="controls-bar rules-controls">
+      <div class="toggle-group" id="rules-toggle">
+        <button class="toggle-btn active" data-view="turn">Turn structure</button>
+        <button class="toggle-btn" data-view="run">Run structure</button>
+      </div>
+      <span class="rules-hint" id="rules-hint"></span>
+    </section>
+
+    <!-- Turn structure view -->
+    <section id="rules-turn" class="rules-view">
+
+      <div class="rules-columns">
+
+        <!-- Corp turn -->
+        <div class="rules-column">
+          <div class="rules-col-header rules-col-header--corp">The Corp's Turn</div>
+
+          <div class="rules-phase">
+            <div class="rules-phase-title">1. Draw Phase</div>
+            <ol class="rules-steps">
+              <li>Corp gains allotted clicks.</li>
+              <li>Paid ability window.</li>
+              <li>Recurring credits refill.</li>
+              <li>Turn begins.</li>
+              <li>Corp draws 1 card.</li>
+            </ol>
+          </div>
+
+          <div class="rules-phase">
+            <div class="rules-phase-title">2. Action Phase</div>
+            <ol class="rules-steps">
+              <li>Paid ability window.</li>
+              <li class="rules-decision">Does Corp have unspent clicks?
+                <span class="rules-branch rules-branch--no">NO → go to (d)</span>
+                <span class="rules-branch rules-branch--yes">YES → Corp takes an action</span>
+              </li>
+              <li>Return to (a).</li>
+              <li>Action phase ends.</li>
+            </ol>
+          </div>
+
+          <div class="rules-phase">
+            <div class="rules-phase-title">3. Discard Phase</div>
+            <ol class="rules-steps">
+              <li>Corp discards cards.</li>
+              <li>Paid ability window.</li>
+              <li>Corp loses unspent click.</li>
+              <li>Turn ends.</li>
+              <li>Turn is complete. Move to Runner's turn.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Runner turn -->
+        <div class="rules-column">
+          <div class="rules-col-header rules-col-header--runner">The Runner's Turn</div>
+
+          <div class="rules-phase">
+            <div class="rules-phase-title">1. Action Phase</div>
+            <ol class="rules-steps">
+              <li>Runner gains allotted clicks.</li>
+              <li>Paid ability window.</li>
+              <li>Recurring credits refill.</li>
+              <li>Turn begins.</li>
+              <li>Paid ability window.</li>
+              <li class="rules-decision">Does Runner have unspent clicks?
+                <span class="rules-branch rules-branch--no">NO → go to (h)</span>
+                <span class="rules-branch rules-branch--yes">YES → Runner takes an action</span>
+              </li>
+              <li>Return to (e).</li>
+              <li>Action phase ends.</li>
+            </ol>
+          </div>
+
+          <div class="rules-phase">
+            <div class="rules-phase-title">2. Discard Phase</div>
+            <ol class="rules-steps">
+              <li>Runner discards cards.</li>
+              <li>Paid ability window.</li>
+              <li>Runner loses unspent click.</li>
+              <li>Turn ends.</li>
+              <li>Turn is complete. Move to Corp's turn.</li>
+            </ol>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Supplementary boxes -->
+      <div class="rules-supp-grid">
+        <div class="rules-supp">
+          <div class="rules-supp-title">Breaching a Server</div>
+          <ol class="rules-steps">
+            <li>The breach begins.</li>
+            <li>If Archives, turn Archives faceup.</li>
+            <li>If HQ or R&amp;D, determine number to access.</li>
+            <li>Any remaining candidates to access?
+              <span class="rules-branch rules-branch--yes">YES → Runner chooses one</span>
+              <span class="rules-branch rules-branch--no">NO → go to (7)</span>
+            </li>
+            <li>Runner accesses the chosen card.</li>
+            <li>Return to (4).</li>
+            <li>Breaching the server is complete.</li>
+          </ol>
+        </div>
+        <div class="rules-supp">
+          <div class="rules-supp-title">Accessing a Card</div>
+          <ol class="rules-steps">
+            <li>The card is accessed.</li>
+            <li>Runner may trash card or use mid-access ability.</li>
+            <li>If the card is an agenda, Runner steals it.</li>
+            <li>Access is complete.</li>
+          </ol>
+        </div>
+      </div>
+
+      <p class="rules-note">Remember: checkpoints occur at the end of each instruction.</p>
+    </section>
+
+    <!-- Run structure view (interactive) -->
+    <section id="rules-run" class="rules-view" style="display:none;">
+      <div class="run-flow" id="run-flow">
+        <!-- populated by rules.js -->
+      </div>
+    </section>
+
+  </main>
+
   <!-- PAGE: MECHANICS (hidden) -->
   <main id="page-mechanics" style="display:none;">
     <section class="controls-bar mech-controls">
@@ -366,5 +503,6 @@
   </main>
 
   <script src="mechanics.js"></script>
+  <script src="rules.js"></script>
 </body>
 </html>
