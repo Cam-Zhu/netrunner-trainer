@@ -483,28 +483,167 @@
 
   <!-- PAGE: MECHANICS (hidden) -->
   <main id="page-mechanics" style="display:none;">
-    <section class="controls-bar mech-controls">
-      <div class="mech-search-wrap">
-        <span class="mech-search-icon">⌕</span>
-        <input type="text" id="mech-search" class="mech-search" placeholder="Search terms… (press / to focus)" autocomplete="off" spellcheck="false" />
+
+    <!-- View toggle: Glossary / Formats -->
+    <section class="controls-bar mech-view-bar">
+      <div class="toggle-group" id="mech-view-toggle">
+        <button class="toggle-btn active" data-view="glossary">Glossary</button>
+        <button class="toggle-btn" data-view="formats">Formats</button>
       </div>
-      <div class="mech-filters">
-        <button class="mech-filter-btn active" data-filter="all">All</button>
-        <button class="mech-filter-btn" data-filter="mechanic">Mechanics</button>
-        <button class="mech-filter-btn" data-filter="concept">Concepts</button>
-      </div>
-      <span class="mech-count" id="mech-count"></span>
     </section>
-    <section class="mech-body">
-      <div class="mech-list-wrap">
-        <div class="mech-list" id="mech-results"></div>
-      </div>
-      <div class="mech-detail-wrap">
-        <div class="mech-detail" id="mech-detail">
-          <div class="mech-detail-empty">Select a term to see its definition.</div>
+
+    <!-- Glossary view -->
+    <div id="mech-glossary-view">
+      <section class="controls-bar mech-controls">
+        <div class="mech-search-wrap">
+          <span class="mech-search-icon">⌕</span>
+          <input type="text" id="mech-search" class="mech-search" placeholder="Search terms… (press / to focus)" autocomplete="off" spellcheck="false" />
         </div>
-      </div>
-    </section>
+        <div class="mech-filters">
+          <button class="mech-filter-btn active" data-filter="all">All</button>
+          <button class="mech-filter-btn" data-filter="mechanic">Mechanics</button>
+          <button class="mech-filter-btn" data-filter="concept">Concepts</button>
+        </div>
+        <span class="mech-count" id="mech-count"></span>
+      </section>
+      <section class="mech-body">
+        <div class="mech-list-wrap">
+          <div class="mech-list" id="mech-results"></div>
+        </div>
+        <div class="mech-detail-wrap">
+          <div class="mech-detail" id="mech-detail">
+            <div class="mech-detail-empty">Select a term to see its definition.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Formats view -->
+    <div id="mech-formats-view" style="display:none;">
+      <section class="fmt-body">
+
+        <div class="fmt-card fmt-card--flagship">
+          <div class="fmt-header">
+            <div class="fmt-name">Standard</div>
+            <div class="fmt-tag">Flagship format</div>
+          </div>
+          <p class="fmt-desc">The main format for organised play. Most official events, including GNKs and District Championships, use Standard. If a tournament doesn't specify a format, assume Standard.</p>
+          <div class="fmt-section-title">Card pool <span class="fmt-updated">as of Vantage Point, March 2026</span></div>
+          <ul class="fmt-list">
+            <li>System Gateway + Elevation (Core Sets — never rotate)</li>
+            <li>Ashes Cycle: Downfall, Uprising</li>
+            <li>Borealis Cycle: Midnight Sun, Parhelion</li>
+            <li>Liberation Cycle: The Automata Initiative, Rebellion Without Rehearsal</li>
+            <li>Vantage Point</li>
+          </ul>
+          <div class="fmt-section-title">How rotation works</div>
+          <p class="fmt-desc">When new sets are released, older sets eventually leave Standard to keep the card pool fresh. The Core Sets (System Gateway + Elevation) never rotate. Vantage Point's release did not trigger a rotation.</p>
+          <div class="fmt-section-title">Ban list <span class="fmt-updated">Standard Ban List 26.03, effective 13 March 2026</span></div>
+          <div class="fmt-ban-grid">
+            <div>
+              <div class="fmt-ban-side">Corp</div>
+              <ul class="fmt-ban-list">
+                <li>Bellona</li>
+                <li>Cayambe Grid</li>
+                <li>Cyberdex Sandbox</li>
+                <li>Cybersand Harvester</li>
+                <li>Dr. Vientiane Keeling</li>
+                <li>Drago Ivanov</li>
+                <li>Engram Flush</li>
+                <li>False Lead</li>
+                <li>Gold Farmer</li>
+                <li>Luminal Transubstantiation</li>
+                <li>Nanisivik Grid</li>
+                <li>NBN: Reality Plus</li>
+                <li>Project Vacheron</li>
+                <li>Sting!</li>
+                <li>Svyatogor Excavator</li>
+                <li>Touch-ups</li>
+                <li>Tributary</li>
+              </ul>
+            </div>
+            <div>
+              <div class="fmt-ban-side">Runner</div>
+              <ul class="fmt-ban-list">
+                <li>Bukhgalter</li>
+                <li>Cleaver</li>
+                <li>Endurance</li>
+                <li>Hoshiko Shiro: Untold Protagonist</li>
+                <li>K2CP Turbine</li>
+                <li>Matryoshka</li>
+                <li>Moshing</li>
+                <li>Nyusha "Sable" Sintashta: Symphonic Prodigy</li>
+                <li>Rezeki</li>
+                <li>Trick Shot</li>
+                <li>Tsakhia "Bankhar" Gantulga</li>
+                <li>World Tree</li>
+              </ul>
+            </div>
+          </div>
+          <a class="fmt-link" href="https://nullsignal.games/players/supported-formats/#standard" target="_blank" rel="noopener">Full details on nullsignal.games ↗</a>
+        </div>
+
+        <div class="fmt-card">
+          <div class="fmt-header">
+            <div class="fmt-name">Startup</div>
+            <div class="fmt-tag">Beginner-friendly</div>
+          </div>
+          <p class="fmt-desc">A limited card pool format designed for newer players entering organised play, and for experienced players who want a tighter deckbuilding challenge. Smaller pool means faster games and cleaner decisions.</p>
+          <div class="fmt-section-title">Card pool <span class="fmt-updated">as of Vantage Point, March 2026</span></div>
+          <ul class="fmt-list">
+            <li>System Gateway + Elevation (Core Sets)</li>
+            <li>Vantage Point</li>
+          </ul>
+          <p class="fmt-desc fmt-note">The Liberation Cycle rotated out when Vantage Point was released.</p>
+          <div class="fmt-section-title">Additional restriction</div>
+          <p class="fmt-desc">Startup Corp decks may contain a maximum of 3 agenda cards with a printed agenda point value of 3 or greater.</p>
+          <div class="fmt-section-title">Ban list</div>
+          <div class="fmt-ban-grid">
+            <div>
+              <div class="fmt-ban-side">Corp</div>
+              <ul class="fmt-ban-list">
+                <li>NBN: Reality Plus</li>
+                <li>Let Them Dream</li>
+                <li>Seamless Launch</li>
+                <li>Mercia B4LL4RD</li>
+              </ul>
+            </div>
+            <div>
+              <div class="fmt-ban-side">Runner</div>
+              <ul class="fmt-ban-list">
+                <li>Cleaver</li>
+              </ul>
+            </div>
+          </div>
+          <a class="fmt-link" href="https://nullsignal.games/players/supported-formats/#startup" target="_blank" rel="noopener">Full details on nullsignal.games ↗</a>
+        </div>
+
+        <div class="fmt-card">
+          <div class="fmt-header">
+            <div class="fmt-name">Eternal</div>
+            <div class="fmt-tag">No rotation</div>
+          </div>
+          <p class="fmt-desc">Eternal uses almost the entire printed card pool across all eras of Netrunner — FFG-era sets included. No rotation ever occurs. It uses a points system instead of a simple ban list: each deck has 7 points to spend on powerful cards. Any card not on the points list costs 0 and can be included freely.</p>
+          <div class="fmt-section-title">How the points list works</div>
+          <p class="fmt-desc">Cards are rated 1–4 points based on power level. Spending a card's point cost lets you include a full playset. A small number of cards are banned outright. You can mix and match across point values as long as your total stays at 7 or under — per deck, not shared between Corp and Runner.</p>
+          <a class="fmt-link" href="https://nullsignal.games/players/supported-formats/#eternal" target="_blank" rel="noopener">Full points list on nullsignal.games ↗</a>
+        </div>
+
+        <div class="fmt-card fmt-card--minor">
+          <div class="fmt-header">
+            <div class="fmt-name">Other formats</div>
+          </div>
+          <p class="fmt-desc"><strong>Random Access Memories (RAM)</strong> uses a randomly drawn card pool, generated in a livestreamed event. Regular RAM tournaments are currently on hiatus but unofficial play continues.</p>
+          <p class="fmt-desc"><strong>Snapshot</strong> is a preserved snapshot of the meta from Magnum Opus 2018, the final FFG organised play event. A piece of Netrunner history — rarely played competitively today.</p>
+          <p class="fmt-desc">The community also runs many unofficial formats. Check the NSG Discord and community hubs for what's active near you.</p>
+          <a class="fmt-link" href="https://nullsignal.games/players/supported-formats/" target="_blank" rel="noopener">All formats on nullsignal.games ↗</a>
+        </div>
+
+        <p class="fmt-updated-note">Format information sourced from <a href="https://nullsignal.games/players/supported-formats/" target="_blank" rel="noopener">nullsignal.games</a>. Card pool and ban list effective March 2026.</p>
+
+      </section>
+    </div>
+
   </main>
 
   <script src="mechanics.js"></script>
