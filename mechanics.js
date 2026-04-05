@@ -530,6 +530,18 @@ function initMechanics() {
   const detailPanel = document.getElementById("mech-detail");
   const countEl = document.getElementById("mech-count");
 
+  // View toggle: Glossary / Formats
+  document.getElementById("mech-view-toggle").querySelectorAll(".toggle-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.getElementById("mech-view-toggle").querySelectorAll(".toggle-btn")
+        .forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const isGlossary = btn.dataset.view === "glossary";
+      document.getElementById("mech-glossary-view").style.display = isGlossary ? "" : "none";
+      document.getElementById("mech-formats-view").style.display  = isGlossary ? "none" : "";
+    });
+  });
+
   let activeFilter = "all";
   let activeId = null;
 
