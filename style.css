@@ -1007,7 +1007,7 @@ kbd {
 .fct-tag--criminal { color: #4a9eff; background: #050f1f; border-color: #1a3a5c; }
 .fct-tag--shaper   { color: #70c870; background: #051405; border-color: #205c20; }
 
-.mech-badge-faction { background: #1a1a2e; color: #a78bfa; border-color: #4c3b8a; }
+.mech-badge-faction  { background: var(--warn-bg);  color: var(--warn);  border: 1px solid #3a2500; }
 
 /* responsive */
 @media (max-width: 600px) {
