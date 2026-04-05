@@ -977,6 +977,38 @@ kbd {
 .fmt-updated-note a { color: var(--text-mute); }
 .fmt-updated-note a:hover { color: var(--text-dim); }
 
+.fct-heading { margin: 0.5rem 0 0.75rem; }
+.fct-side {
+  font-size: 0.72rem; font-weight: 700; font-family: var(--font-mono);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 12px; border-radius: var(--radius);
+  display: inline-block;
+}
+.fct-side--corp   { background: var(--corp-bg);   color: var(--corp);   border: 1px solid #1a3a5c; }
+.fct-side--runner { background: var(--runner-bg); color: var(--runner); border: 1px solid #3a1a5c; }
+
+/* Corp faction accent colours */
+.fct-card--hb      { border-left: 3px solid #4a9eff; }
+.fct-card--jinteki { border-left: 3px solid #e05555; }
+.fct-card--nbn     { border-left: 3px solid #f0c040; }
+.fct-card--weyland { border-left: 3px solid #5caa5c; }
+
+/* Runner faction accent colours */
+.fct-card--anarch   { border-left: 3px solid #e07830; }
+.fct-card--criminal { border-left: 3px solid #4a9eff; }
+.fct-card--shaper   { border-left: 3px solid #70c870; }
+
+/* Faction tags */
+.fct-tag--hb      { color: #4a9eff; background: #050f1f; border-color: #1a3a5c; }
+.fct-tag--jinteki { color: #e05555; background: #1f0505; border-color: #5c1a1a; }
+.fct-tag--nbn     { color: #c89000; background: #1a1400; border-color: #5c4800; }
+.fct-tag--weyland { color: #5caa5c; background: #051405; border-color: #1a5c1a; }
+.fct-tag--anarch   { color: #e07830; background: #1a0d00; border-color: #5c3010; }
+.fct-tag--criminal { color: #4a9eff; background: #050f1f; border-color: #1a3a5c; }
+.fct-tag--shaper   { color: #70c870; background: #051405; border-color: #205c20; }
+
+.mech-badge-faction { background: #1a1a2e; color: #a78bfa; border-color: #4c3b8a; }
+
 /* responsive */
 @media (max-width: 600px) {
   header { padding: 1rem; flex-direction: column; gap: 4px; }
