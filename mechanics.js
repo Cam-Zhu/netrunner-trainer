@@ -511,6 +511,97 @@ const MECHANICS_DATA = [
     seeAlso: ["face-checking", "must-trash-assets", "tempo"],
     rulesLink: null,
   },
+
+  // ── FACTIONS ──────────────────────────────────────────────────────────────
+
+  {
+    id: "haas-bioroid",
+    term: "Haas-Bioroid",
+    type: "faction",
+    side: "corp",
+    tier: null,
+    short: "The efficiency Corp. Bioroid ice, click compression, and program destruction.",
+    detail: "Haas-Bioroid (HB) manufactures synthetic bioroids — artificial humanoids used for labour — and their card design reflects total efficiency. HB identities and operations often generate credits or extra clicks for actions you are already taking. Their signature ice are bioroids: strong, efficient pieces whose subroutines can be broken by spending clicks rather than credits, making them taxing against tempo-conscious runners but porous to those willing to sacrifice clicks. HB is the primary fast advance faction via Biotic Labor, and a strong glacier faction with punishing ice like Fairchild. Their secondary threat is core damage and program destruction. Runners facing HB must manage both their credits and their clicks carefully.",
+    seeAlso: ["fast-advance", "scoring-window", "core-damage"],
+    rulesLink: null,
+  },
+  {
+    id: "jinteki",
+    term: "Jinteki",
+    type: "faction",
+    side: "corp",
+    tier: null,
+    short: "The trap Corp. Net damage, bluffing, and servers that punish curiosity.",
+    detail: "Jinteki is the cloning and biotech megacorporation, and their game plan is built on deception and punishment. They are the primary net damage faction — their ice, ambushes, and traps deal net damage on encounter or access, making every facedown card a potential threat. Jinteki ice tends to be cheap but porous, letting runners in while costing them cards. Their strategic core is information asymmetry: an advanced card in a Jinteki remote could be a scorable agenda or a trap that ends the game. They are widely considered the most difficult Corp faction to pilot well, requiring deep understanding of bluffing, timing, and opponent psychology. Runners facing Jinteki must respect every server, which itself is a victory for the Corp.",
+    seeAlso: ["net-damage", "advancing-non-agendas", "flatline-check"],
+    rulesLink: null,
+  },
+  {
+    id: "nbn",
+    term: "NBN",
+    type: "faction",
+    side: "corp",
+    tier: null,
+    short: "The tag Corp. Fast scoring, trace effects, and punishing runners who stay tagged.",
+    detail: "NBN is the media and communications giant — they own the data networks and the narrative. Their card design is built around tagging the runner and exploiting those tags, while also being the strongest fast advance faction. NBN ice frequently gives tags on encounter or when subroutines fire, and their operations convert those tags into resource destruction or meat damage. They have the best fast advance tools in the game, capable of scoring agendas from hand in a single turn. Their ice is not the most taxing, but on-encounter effects fire before breakers can act. Runners facing NBN must decide quickly whether to clear tags or accept the risk — and must always be wary of a surprise score out of hand.",
+    seeAlso: ["tags", "tag-punishment", "fast-advance", "floating-tags"],
+    rulesLink: null,
+  },
+  {
+    id: "weyland-consortium",
+    term: "Weyland Consortium",
+    type: "faction",
+    side: "corp",
+    tier: null,
+    short: "The money Corp. Big ice, strong economy, and meat damage kill lines.",
+    detail: "Weyland Consortium is the megacorporation of construction, resource extraction, and brute force. They have the strongest economy of any Corp faction and build the biggest ice — towering barriers that are expensive to break and can scale with advancement counters. Their kill plan is meat damage, usually enabled by tags from operations like Hard-Hitting News. Weyland's glacier strategy is straightforward: build a fortified remote, accumulate credits, and force the runner to spend more than they can afford to contest it. Some Weyland identities specialise in advancement-counter ice (Akhet, Pharos, Logjam) that rewards a patient scoring plan. Weyland is the most accessible Corp faction for new players — their game plan is clear, their economy is forgiving, and their ice does what it says.",
+    seeAlso: ["meat-damage", "tag-punishment", "advancement-counters", "bad-publicity"],
+    rulesLink: null,
+  },
+  {
+    id: "anarch",
+    term: "Anarch",
+    type: "faction",
+    side: "runner",
+    tier: null,
+    short: "The disruption Runner. Virus programs, ice trashing, and relentless pressure.",
+    detail: "Anarchs are the rage-fuelled revolutionaries of the runner world — they don't finesse their way past the system, they tear it apart. Their card design is built around virus programs, ice destruction, and resource denial. Where Criminals bypass ice and Shapers build careful rigs, Anarchs trash ice outright, making servers progressively cheaper to run over time. Their breaker suite is powerful and many programs gain strength from virus counters that accumulate through running. Anarchs typically have strong multi-access tools (Conduit for R&D) and forceful disruption events. Their weakness is economy — credits come in bursts and card draw can be inconsistent. Note: in current Standard, Anarch is rebuilding after the banning of their strongest identity, Hoshiko Shiro. The faction is less dominant than it has been in recent years.",
+    seeAlso: ["purge", "credit-denial", "rd-lock", "must-trash-assets"],
+    rulesLink: null,
+  },
+  {
+    id: "criminal",
+    term: "Criminal",
+    type: "faction",
+    side: "runner",
+    tier: null,
+    short: "The finesse Runner. Events, bypass effects, and run-based economy.",
+    detail: "Criminals are the professionals of the runner world — cool, calculating, and in it for the score. Their card design is built around powerful events, run-based economy, and ice interaction that doesn't require breaking subroutines: bypass, derez, expose, and the best sentry breakers in the game. Criminals excel at early pressure — their run events generate burst credits and HQ access before the Corp is set up, and identity abilities often reward aggressive running. They are considered the strongest accessible faction in current Standard, with a wide variety of competitive identities. The tradeoff is that Criminal programs tend to be expensive, and they often rely on out-of-faction breakers for barriers and code gates. Expect to win on tempo, not inevitability.",
+    seeAlso: ["bypassing-ice", "derezzing-ice", "remote-pressure", "burst-economy", "tempo"],
+    rulesLink: null,
+  },
+  {
+    id: "shaper",
+    term: "Shaper",
+    type: "faction",
+    side: "runner",
+    tier: null,
+    short: "The builder Runner. Efficient rigs, strong card draw, and late-game power.",
+    detail: "Shapers are the tinkerers and problem-solvers of the runner world — motivated by curiosity and craftsmanship rather than money or rage. Their card design is built around efficient rig construction, the best card draw and program tutoring of any faction, and programs that grow stronger over time. Shapers typically have the best code gate breakers and identity abilities that reduce install costs. They are a late-game faction: slow to set up, but formidable once the rig is complete. Their vulnerability is early pressure — without a full rig, Shapers must be selective about what they run. In current Standard, Shaper identities support a range of approaches including stealth rigs, R&D lock strategies, and flexible control builds.",
+    seeAlso: ["rd-lock", "remote-pressure", "central-pressure", "tempo"],
+    rulesLink: null,
+  },
+  {
+    id: "mini-factions",
+    term: "Mini-Factions",
+    type: "faction",
+    side: "runner",
+    tier: null,
+    short: "Adam, Apex, and Sunny Lebeau — three additional Runner factions with unique rules and unusual playstyles.",
+    detail: "In addition to the three main Runner factions, three mini-factions exist: Adam (a bioroid with directive cards that start the game already installed, giving him a pre-built engine from turn one), Apex (a predatory AI who runs facedown installed cards and interacts unusually with Archives), and Sunny Lebeau (a high-link, big-economy runner with a large deck who starts slowly but becomes hard to stop late). Mini-faction identities have higher influence limits than standard Runner identities, compensating for their smaller card pools. All three are legal in Standard and occasionally appear in competitive play, but they are uncommon at top tables.",
+    seeAlso: ["anarch", "criminal", "shaper"],
+    rulesLink: null,
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -530,15 +621,15 @@ function initMechanics() {
   const detailPanel = document.getElementById("mech-detail");
   const countEl = document.getElementById("mech-count");
 
-  // View toggle: Glossary / Formats
+  // View toggle: Glossary / Formats / Factions
   document.getElementById("mech-view-toggle").querySelectorAll(".toggle-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.getElementById("mech-view-toggle").querySelectorAll(".toggle-btn")
         .forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      const isGlossary = btn.dataset.view === "glossary";
-      document.getElementById("mech-glossary-view").style.display = isGlossary ? "" : "none";
-      document.getElementById("mech-formats-view").style.display  = isGlossary ? "none" : "";
+      const view = btn.dataset.view;
+      document.getElementById("mech-glossary-view").style.display = view === "glossary" ? "" : "none";
+      document.getElementById("mech-formats-view").style.display  = view === "formats"  ? "" : "none";
     });
   });
 
@@ -551,7 +642,8 @@ function initMechanics() {
       const matchesFilter =
         filter === "all" ||
         (filter === "mechanic" && entry.type === "mechanic") ||
-        (filter === "concept" && entry.type === "concept");
+        (filter === "concept" && entry.type === "concept") ||
+        (filter === "faction" && entry.type === "faction");
       const matchesQuery =
         !q ||
         entry.term.toLowerCase().includes(q) ||
@@ -611,6 +703,10 @@ function initMechanics() {
           </div>`
         : "";
 
+    const detailHtml = entry.type === "faction"
+      ? entry.detail.split("\n\n").map(p => `<p class="mech-detail-body">${p}</p>`).join("")
+      : `<p class="mech-detail-body">${entry.detail}</p>`;
+
     detailPanel.innerHTML = `
       <div class="mech-detail-header">
         <div class="mech-detail-title-row">
@@ -621,7 +717,7 @@ function initMechanics() {
       </div>
       <p class="mech-detail-short">${entry.short}</p>
       <div class="mech-detail-divider"></div>
-      <p class="mech-detail-body">${entry.detail}</p>
+      ${detailHtml}
       ${seeAlsoHtml}
     `;
 
