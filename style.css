@@ -886,6 +886,21 @@ kbd {
 
 .mech-view-bar { padding-bottom: 0; border-bottom: 1px solid var(--border); margin-bottom: 0; }
 
+.fmt-nav {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.fmt-nav-link {
+  font-size: 0.72rem; font-family: var(--font-mono);
+  color: var(--text-dim); text-decoration: none;
+  background: var(--bg-raised); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 3px 10px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.fmt-nav-link:hover { color: var(--accent); border-color: var(--accent-dim); }
+
 .fmt-body {
   display: flex; flex-direction: column; gap: 16px;
   padding: 1.25rem 0 3rem;
