@@ -286,7 +286,6 @@ fc.drawCard = function() {
   fcEls.card.classList.remove('is-flipped');
   fcEls.actionsFront.style.display = '';
   fcEls.actionsBack.style.display  = 'none';
-  fcEls.coachText.innerHTML = '<span class="coach-placeholder">Press "Ask coach" for a coaching note on this card.</span>';
 
   // Artwork
   const imgUrl = typeof CARD_IMAGES !== 'undefined' ? CARD_IMAGES[name] : null;
