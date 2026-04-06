@@ -68,6 +68,32 @@ function saveRatings() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(fc.ratings)); } catch {}
 }
 
+// ─── Card name resolver ───────────────────────────────────────────────────────
+// Deck list names may differ from CARD_DATA keys in two ways:
+//   1. Accents stripped:  "Brân 1.0" in deck vs "Bran 1.0" in data
+//   2. Identity subtitles: "Building a Better World" vs "Weyland Consortium: Building a Better World"
+// Build a map from normalised name → canonical key so lookups always succeed.
+
+const CARD_NAME_MAP = (() => {
+  if (typeof CARD_DATA === 'undefined') return {};
+  const normalize = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const map = {};
+  for (const key of Object.keys(CARD_DATA)) {
+    // exact (normalised)
+    map[normalize(key)] = key;
+    // subtitle only — strip "Faction: " prefix if present
+    const colon = key.indexOf(': ');
+    if (colon !== -1) map[normalize(key.slice(colon + 2))] = key;
+  }
+  return map;
+})();
+
+function resolveCardName(name) {
+  if (typeof CARD_DATA !== 'undefined' && CARD_DATA[name]) return name;
+  const normalize = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  return CARD_NAME_MAP[normalize(name)] || name;
+}
+
 // ─── Pool building ────────────────────────────────────────────────────────────
 
 function buildPool() {
@@ -85,10 +111,10 @@ function buildPool() {
   // My decks — pull unique names from the deck arrays in app.js state
   const names = new Set();
   if (fc.deckFilter === 'corp' || fc.deckFilter === 'both') {
-    state.decks.corp.forEach(n => names.add(n));
+    state.decks.corp.forEach(n => names.add(resolveCardName(n)));
   }
   if (fc.deckFilter === 'runner' || fc.deckFilter === 'both') {
-    state.decks.runner.forEach(n => names.add(n));
+    state.decks.runner.forEach(n => names.add(resolveCardName(n)));
   }
   return [...names];
 }
