@@ -127,7 +127,6 @@ const fcEls = {
   cardMeta:     document.getElementById('fc-card-meta'),
   backName:     document.getElementById('fc-back-name'),
   oracle:       document.getElementById('fc-oracle'),
-  coachText:    document.getElementById('fc-coach-text'),
   actionsFront: document.getElementById('fc-actions-front'),
   actionsBack:  document.getElementById('fc-actions-back'),
   progressFill: document.getElementById('fc-progress-fill'),
