@@ -146,7 +146,6 @@ const chEls = {
   cardMeta:       document.getElementById('ch-card-meta'),
   backName:       document.getElementById('ch-back-name'),
   oracle:         document.getElementById('ch-oracle'),
-  coachText:      document.getElementById('ch-coach-text'),
   actionsFront:   document.getElementById('ch-actions-front'),
   actionsBack:    document.getElementById('ch-actions-back'),
   progressFill:   document.getElementById('ch-progress-fill'),
@@ -297,7 +296,6 @@ function chDraw() {
   chEls.card.classList.remove('is-flipped');
   chEls.actionsFront.style.display = '';
   chEls.actionsBack.style.display  = 'none';
-  chEls.coachText.innerHTML = '<span class="coach-placeholder">Press "Ask coach" for a note on this card.</span>';
 
   // Artwork
   const imgUrl = typeof CARD_IMAGES !== 'undefined' ? CARD_IMAGES[name] : null;
