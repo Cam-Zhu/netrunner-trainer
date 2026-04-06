@@ -173,7 +173,7 @@ document.getElementById('ch-reveal-btn').addEventListener('click', chReveal);
 document.getElementById('ch-knew-btn').addEventListener('click',   () => chRate('knew'));
 document.getElementById('ch-unsure-btn').addEventListener('click', () => chRate('unsure'));
 document.getElementById('ch-blank-btn').addEventListener('click',  () => chRate('blank'));
-document.getElementById('ch-coach-btn').addEventListener('click',  chAskCoach);
+// document.getElementById('ch-coach-btn').addEventListener('click',  chAskCoach);
 
 chEls.resultNext.addEventListener('click', () => {
   chEls.result.style.display = 'none';
@@ -465,9 +465,9 @@ function chUpdateProgress() {
     `${Object.values(a.results).filter(r => r === 'blank').length} blank`;
 }
 
-// ─── Coach ────────────────────────────────────────────────────────────────────
+// ─── Coach (temporarily disabled) ────────────────────────────────────────────
 
-async function chAskCoach() {
+/* async function chAskCoach() {
   const a = ch.active;
   if (!a || !a.currentCard) return;
   const name = a.currentCard;
@@ -499,7 +499,7 @@ async function chAskCoach() {
   } catch (err) {
     chEls.coachText.textContent = `Error: ${err.message}`;
   }
-}
+} */
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
