@@ -225,7 +225,7 @@ document.getElementById('fc-reveal-btn').addEventListener('click', fcReveal);
 document.getElementById('fc-knew-btn').addEventListener('click',   () => fcRate('knew'));
 document.getElementById('fc-unsure-btn').addEventListener('click', () => fcRate('unsure'));
 document.getElementById('fc-blank-btn').addEventListener('click',  () => fcRate('blank'));
-document.getElementById('fc-coach-btn').addEventListener('click',  fcAskCoach);
+// document.getElementById('fc-coach-btn').addEventListener('click',  fcAskCoach);
 document.getElementById('fc-reset-stats').addEventListener('click', fcResetSession);
 
 // ─── Draw card ────────────────────────────────────────────────────────────────
@@ -358,9 +358,9 @@ function fcRate(result) {
   fc.drawCard();
 }
 
-// ─── Ask coach ────────────────────────────────────────────────────────────────
+// ─── Ask coach (temporarily disabled) ────────────────────────────────────────
 
-async function fcAskCoach() {
+/* async function fcAskCoach() {
   const name = fc.currentCard;
   if (!name) return;
 
@@ -391,7 +391,7 @@ Give a compact coaching note on this card — what it does, when you'd play it, 
   } catch (err) {
     fcEls.coachText.textContent = `Error: ${err.message}`;
   }
-}
+} */
 
 // ─── Progress ─────────────────────────────────────────────────────────────────
 
