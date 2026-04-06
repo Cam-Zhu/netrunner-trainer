@@ -42,7 +42,7 @@ document.querySelectorAll('.page-tab').forEach(tab => {
 const STORAGE_KEY = 'nrtrainer_fc_ratings';
 
 const fc = {
-  pool:        'decks',   // 'decks' | 'all'
+  pool:        'all',    // 'decks' | 'all'
   deckFilter:  'both',    // 'both' | 'corp' | 'runner'
   cycleFilter: '',        // cycle_id or '' for all
   setFilter:   '',        // set_id or '' for all
