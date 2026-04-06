@@ -69,10 +69,17 @@ function saveRatings() {
 }
 
 // ─── Card name resolver ───────────────────────────────────────────────────────
-// Deck list names may differ from CARD_DATA keys in two ways:
+// Deck list names may differ from CARD_DATA keys in three ways:
 //   1. Accents stripped:  "Brân 1.0" in deck vs "Bran 1.0" in data
-//   2. Identity subtitles: "Building a Better World" vs "Weyland Consortium: Building a Better World"
-// Build a map from normalised name → canonical key so lookups always succeed.
+//   2. Identity subtitles: "Building a Better World" vs "Weyland Consortium: ..."
+//   3. Community shorthands or old names that don't match the canonical key
+
+const CARD_ALIASES = {
+  'bankhar':                     'Tsakhia Bankhar Gantulga',
+  'tsakhia "bankhar" gantulga':  'Tsakhia Bankhar Gantulga',
+  'paladin polet hyndman':       'Paladin Poemu',
+  'paladin':                     'Paladin Poemu',
+};
 
 const CARD_NAME_MAP = (() => {
   if (typeof CARD_DATA === 'undefined') return {};
@@ -91,7 +98,9 @@ const CARD_NAME_MAP = (() => {
 function resolveCardName(name) {
   if (typeof CARD_DATA !== 'undefined' && CARD_DATA[name]) return name;
   const normalize = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  return CARD_NAME_MAP[normalize(name)] || name;
+  const norm = normalize(name);
+  if (CARD_ALIASES[norm]) return CARD_ALIASES[norm];
+  return CARD_NAME_MAP[norm] || name;
 }
 
 // ─── Pool building ────────────────────────────────────────────────────────────
