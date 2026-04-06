@@ -884,7 +884,7 @@ kbd {
 
 /* ── Formats tab ─────────────────────────────────────────────────────────── */
 
-.mech-view-bar { padding-bottom: 0; border-bottom: 1px solid var(--border); margin-bottom: 0; }
+.mech-view-bar { padding-bottom: 0; margin-bottom: 0; }
 
 .fmt-nav {
   display: flex; flex-wrap: wrap; gap: 6px;
