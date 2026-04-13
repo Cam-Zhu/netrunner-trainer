@@ -46,6 +46,8 @@ const fc = {
   deckFilter:  'both',    // 'both' | 'corp' | 'runner'
   cycleFilter: '',        // cycle_id or '' for all
   setFilter:   '',        // set_id or '' for all
+  typeFilter:  '',        // type key or '' for all
+  factionFilter: '',      // faction or '' for all
   currentCard: null,
   isFlipped:   false,
   pass:        1,         // 1 = full pool, 2 = weak cards only
@@ -105,13 +107,34 @@ function resolveCardName(name) {
 
 // ─── Pool building ────────────────────────────────────────────────────────────
 
+function matchesTypeFilter(d, typeFilter) {
+  if (!typeFilter) return true;
+  const sub = d.subtypes || [];
+  switch (typeFilter) {
+    case 'ice':              return d.type === 'ice';
+    case 'ice:barrier':     return d.type === 'ice' && sub.includes('barrier');
+    case 'ice:code_gate':   return d.type === 'ice' && sub.includes('code_gate');
+    case 'ice:sentry':      return d.type === 'ice' && sub.includes('sentry');
+    case 'icebreaker':      return d.type === 'program' && sub.includes('icebreaker');
+    case 'program':         return d.type === 'program' && !sub.includes('icebreaker');
+    case 'event_operation': return d.type === 'event' || d.type === 'operation';
+    case 'resource_asset':  return d.type === 'resource' || d.type === 'asset';
+    case 'hardware_upgrade':return d.type === 'hardware' || d.type === 'upgrade';
+    case 'agenda':          return d.type === 'agenda';
+    default:                return true;
+  }
+}
+
 function buildPool() {
   if (fc.pool === 'all') {
     if (typeof CARD_DATA === 'undefined') return [];
     return Object.entries(CARD_DATA)
       .filter(([, d]) => {
-        if (fc.cycleFilter && d.cycle_id !== fc.cycleFilter) return false;
-        if (fc.setFilter   && d.set_id   !== fc.setFilter)   return false;
+        if (d.type === 'corp_identity' || d.type === 'runner_identity') return false;
+        if (fc.cycleFilter  && d.cycle_id  !== fc.cycleFilter)  return false;
+        if (fc.setFilter    && d.set_id    !== fc.setFilter)    return false;
+        if (fc.factionFilter && d.faction  !== fc.factionFilter) return false;
+        if (!matchesTypeFilter(d, fc.typeFilter))               return false;
         return true;
       })
       .map(([name]) => name);
@@ -124,6 +147,16 @@ function buildPool() {
   }
   if (fc.deckFilter === 'runner' || fc.deckFilter === 'both') {
     state.decks.runner.forEach(n => names.add(resolveCardName(n)));
+  }
+  // Apply type/faction filters to deck pool too
+  if (fc.typeFilter || fc.factionFilter) {
+    return [...names].filter(name => {
+      const d = typeof CARD_DATA !== 'undefined' ? CARD_DATA[name] : null;
+      if (!d) return true; // unknown card — keep it
+      if (fc.factionFilter && d.faction !== fc.factionFilter) return false;
+      if (!matchesTypeFilter(d, fc.typeFilter)) return false;
+      return true;
+    });
   }
   return [...names];
 }
@@ -176,6 +209,8 @@ const fcEls = {
   setGroup:     document.getElementById('fc-set-group'),
   cycleSelect:  document.getElementById('fc-cycle-select'),
   setSelect:    document.getElementById('fc-set-select'),
+  typeSelect:   document.getElementById('fc-type-select'),
+  factionSelect:document.getElementById('fc-faction-select'),
 };
 
 // ─── Controls ─────────────────────────────────────────────────────────────────
@@ -189,9 +224,18 @@ function bindFcToggle(groupId, key) {
       fc[key] = btn.dataset.value;
       if (key === 'pool') {
         const isAll = fc.pool === 'all';
-        fcEls.deckGroup.style.display  = isAll ? 'none' : '';
-        fcEls.cycleGroup.style.display = isAll ? '' : 'none';
-        fcEls.setGroup.style.display   = isAll ? '' : 'none';
+        fcEls.deckGroup.style.display    = isAll ? 'none' : '';
+        fcEls.cycleGroup.style.display   = isAll ? '' : 'none';
+        fcEls.setGroup.style.display     = isAll ? '' : 'none';
+        document.getElementById('fc-type-group').style.display    = isAll ? '' : 'none';
+        document.getElementById('fc-faction-group').style.display = isAll ? '' : 'none';
+        // Reset type/faction filters when switching to deck mode
+        if (!isAll) {
+          fc.typeFilter = '';
+          fc.factionFilter = '';
+          fcEls.typeSelect.value = '';
+          fcEls.factionSelect.value = '';
+        }
       }
       fc.queue = [];
       fc.drawCard();
@@ -247,6 +291,20 @@ fcEls.cycleSelect.addEventListener('change', () => {
 // Set select change → update filter
 fcEls.setSelect.addEventListener('change', () => {
   fc.setFilter = fcEls.setSelect.value;
+  fc.queue = [];
+  fc.drawCard();
+});
+
+// Type select change → update filter
+fcEls.typeSelect.addEventListener('change', () => {
+  fc.typeFilter = fcEls.typeSelect.value;
+  fc.queue = [];
+  fc.drawCard();
+});
+
+// Faction select change → update filter
+fcEls.factionSelect.addEventListener('change', () => {
+  fc.factionFilter = fcEls.factionSelect.value;
   fc.queue = [];
   fc.drawCard();
 });
@@ -476,7 +534,6 @@ function fcResetSession() {
   fcEls.artWrap.style.display = '';
   fc.drawCard();
 }
-
 // ─── Session complete ─────────────────────────────────────────────────────────
 
 function showPass2Banner(weakCount) {
