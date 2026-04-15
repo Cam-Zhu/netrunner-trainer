@@ -50,6 +50,7 @@ const LEVELS = [
 
 const PASS_THRESHOLD = 0.80; // 80% "knew it" to pass
 const STORAGE_KEY_CH = 'nrtrainer_challenge';
+const STORAGE_KEY_CH_MODE = 'nrtrainer_challenge_mode';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -57,14 +58,11 @@ const ch = {
   // Persisted: { "1_set": true, "1_cum": true, "2_set": false, ... }
   progress: loadProgress(),
 
+  // Display mode: 'art' (art first) or 'name' (name first) — persisted
+  displayMode: localStorage.getItem(STORAGE_KEY_CH_MODE) || 'art',
+
   // Active level session
   active: null,
-  // active = {
-  //   levelId, mode ('set'|'cum'), pool[], queue[],
-  //   currentCard, isFlipped,
-  //   results: { cardName: 'knew'|'unsure'|'blank' },
-  //   seen: Set of card names shown at least once
-  // }
 };
 
 function loadProgress() {
@@ -139,13 +137,18 @@ const chEls = {
   thresholdLabel: document.getElementById('ch-threshold-label'),
   card:           document.getElementById('ch-card'),
   front:          document.getElementById('ch-front'),
+  frontName:      document.getElementById('ch-front-name'),
   back:           document.getElementById('ch-back'),
+  backImage:      document.getElementById('ch-back-image'),
   art:            document.getElementById('ch-art'),
   artPlaceholder: document.getElementById('ch-art-placeholder'),
+  artWrap:        document.getElementById('ch-art-wrap'),
   cardName:       document.getElementById('ch-card-name'),
   cardMeta:       document.getElementById('ch-card-meta'),
+  nameOnly:       document.getElementById('ch-name-only'),
   backName:       document.getElementById('ch-back-name'),
   oracle:         document.getElementById('ch-oracle'),
+  fullArt:        document.getElementById('ch-full-art'),
   actionsFront:   document.getElementById('ch-actions-front'),
   actionsBack:    document.getElementById('ch-actions-back'),
   progressFill:   document.getElementById('ch-progress-fill'),
@@ -193,6 +196,26 @@ chEls.resultRetry.addEventListener('click', () => {
 
 ch.renderLevelMap = function() {
   chEls.levelMap.innerHTML = '';
+
+  // Display mode toggle
+  const modeBar = document.createElement('div');
+  modeBar.className = 'ch-mode-bar';
+  modeBar.innerHTML = `
+    <span class="ch-mode-bar-label">Card display</span>
+    <div class="toggle-group" id="ch-display-toggle">
+      <button class="toggle-btn ${ch.displayMode === 'art'  ? 'active' : ''}" data-display="art">Art first</button>
+      <button class="toggle-btn ${ch.displayMode === 'name' ? 'active' : ''}" data-display="name">Name first</button>
+    </div>
+  `;
+  modeBar.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      modeBar.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ch.displayMode = btn.dataset.display;
+      try { localStorage.setItem(STORAGE_KEY_CH_MODE, ch.displayMode); } catch {}
+    });
+  });
+  chEls.levelMap.appendChild(modeBar);
 
   LEVELS.forEach(level => {
     const unlocked  = isUnlocked(level.id);
@@ -292,27 +315,37 @@ function chDraw() {
   a.isFlipped   = false;
   a.seen.add(name);
 
-  // Reset card UI
+  // Reset UI
   chEls.card.classList.remove('is-flipped');
   chEls.actionsFront.style.display = '';
   chEls.actionsBack.style.display  = 'none';
+  chEls.back.style.display         = 'none';
+  chEls.backImage.style.display    = 'none';
 
-  // Artwork
-  const imgUrl = typeof CARD_IMAGES !== 'undefined' ? CARD_IMAGES[name] : null;
-  const data   = typeof CARD_DATA   !== 'undefined' ? CARD_DATA[name]   : null;
-  const isIce  = data?.type === 'ice';
-
-  if (imgUrl) {
-    chEls.art.src = imgUrl;
-    chEls.art.className = isIce ? 'ice-art' : '';
-    chEls.artPlaceholder.classList.add('hidden');
+  if (ch.displayMode === 'name') {
+    chEls.front.style.display     = 'none';
+    chEls.frontName.style.display = '';
+    chEls.nameOnly.textContent    = name;
   } else {
-    chEls.art.src = '';
-    chEls.artPlaceholder.classList.remove('hidden');
-  }
+    chEls.front.style.display     = '';
+    chEls.frontName.style.display = 'none';
 
-  chEls.cardName.textContent = name;
-  chEls.cardMeta.textContent = data ? chFormatMeta(data, false) : '';
+    const imgUrl = typeof CARD_IMAGES !== 'undefined' ? CARD_IMAGES[name] : null;
+    const data   = typeof CARD_DATA   !== 'undefined' ? CARD_DATA[name]   : null;
+    const isIce  = data?.type === 'ice';
+
+    if (imgUrl) {
+      chEls.art.src = imgUrl;
+      chEls.art.className = isIce ? 'ice-art' : '';
+      chEls.artPlaceholder.classList.add('hidden');
+    } else {
+      chEls.art.src = '';
+      chEls.artPlaceholder.classList.remove('hidden');
+    }
+
+    chEls.cardName.textContent = name;
+    chEls.cardMeta.textContent = data ? chFormatMeta(data, false) : '';
+  }
 
   chUpdateProgress();
 }
@@ -323,20 +356,35 @@ function chReveal() {
   const a = ch.active;
   if (!a) return;
   a.isFlipped = true;
-  chEls.card.classList.add('is-flipped');
   chEls.actionsFront.style.display = 'none';
   chEls.actionsBack.style.display  = '';
 
   const name = a.currentCard;
   const data = typeof CARD_DATA !== 'undefined' ? CARD_DATA[name] : null;
 
-  chEls.backName.textContent = name;
-  if (data) {
-    chEls.oracle.innerHTML =
-      `<div class="fc-oracle-stats">${chFormatMeta(data, true)}</div>` +
-      (data.text ? escCh(data.text) : '<em>No oracle text</em>');
+  if (ch.displayMode === 'name') {
+    chEls.frontName.style.display = 'none';
+    chEls.back.style.display      = 'none';
+    chEls.backImage.style.display = 'block';
+    const imgUrl = typeof CARD_IMAGES !== 'undefined' ? CARD_IMAGES[name] : null;
+    if (imgUrl) {
+      chEls.fullArt.src = imgUrl.replace('/small/', '/large/');
+      chEls.fullArt.alt = name;
+    } else {
+      chEls.fullArt.src = '';
+    }
   } else {
-    chEls.oracle.textContent = 'No card data — run the fetch script.';
+    chEls.front.style.display = 'none';
+    chEls.back.style.display  = 'block';
+    chEls.backImage.style.display = 'none';
+    chEls.backName.textContent = name;
+    if (data) {
+      chEls.oracle.innerHTML =
+        `<div class="fc-oracle-stats">${chFormatMeta(data, true)}</div>` +
+        (data.text ? escCh(data.text) : '<em>No oracle text</em>');
+    } else {
+      chEls.oracle.textContent = 'No card data — run the fetch script.';
+    }
   }
 }
 
