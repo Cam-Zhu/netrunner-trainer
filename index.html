@@ -105,7 +105,7 @@
 
         <div class="sh-tab-card">
           <div class="sh-tab-name">Flashcards</div>
-          <p class="sh-tab-body">Flashcard-style card recognition drill with no pressure. Each card is shown face-up with its artwork. Think about what it does, then hit <strong>Reveal</strong> to see the oracle text. Rate yourself — <em>Knew it</em>, <em>Unsure</em>, or <em>Blank</em>. Cards you struggle with come up again in a second pass. Use the pool controls to drill just your decks, a specific cycle, or the entire card pool. Your ratings persist between sessions.</p>
+          <p class="sh-tab-body">Flashcard-style card recognition drill with no pressure. Two modes: <strong>Art first</strong> shows card artwork on the front — think about what it does, then reveal the oracle text. <strong>Name first</strong> shows only the card name — think about what it looks like, then reveal the full card image. Rate yourself — <em>Knew it</em>, <em>Unsure</em>, or <em>Blank</em>. Cards you struggle with come up again in a second pass. Use the pool controls to drill just your decks, a specific cycle, or filter by type and faction. Your ratings persist between sessions.</p>
         </div>
 
         <div class="sh-tab-card">
@@ -219,6 +219,13 @@
           <button class="toggle-btn active" data-value="all">All cards</button>
         </div>
       </div>
+      <div class="control-group">
+        <label class="ctrl-label">Mode</label>
+        <div class="toggle-group" id="fc-mode-toggle">
+          <button class="toggle-btn active" data-value="art">Art first</button>
+          <button class="toggle-btn" data-value="name">Name first</button>
+        </div>
+      </div>
       <div class="control-group fc-set-group" id="fc-deck-group" style="display:none;">
         <label class="ctrl-label">Deck</label>
         <div class="toggle-group" id="fc-deck-toggle">
@@ -297,9 +304,16 @@
           <div class="fc-card-meta" id="fc-card-meta"></div>
           <div class="fc-hint">Think about what this card does, then reveal</div>
         </div>
+        <div class="fc-face fc-front fc-front--name" id="fc-front-name" style="display:none;">
+          <div class="fc-name-only" id="fc-name-only">—</div>
+          <div class="fc-hint">Think about what this card does, then reveal</div>
+        </div>
         <div class="fc-face fc-back" id="fc-back">
           <div class="fc-back-name" id="fc-back-name"></div>
           <div class="fc-oracle" id="fc-oracle"></div>
+        </div>
+        <div class="fc-face fc-back fc-back--image" id="fc-back-image" style="display:none;">
+          <img id="fc-full-art" src="" alt="" />
         </div>
       </div>
       <div class="fc-actions" id="fc-actions-front">
@@ -356,9 +370,16 @@
             <div class="fc-card-meta" id="ch-card-meta"></div>
             <div class="fc-hint">Think about what this card does, then reveal</div>
           </div>
+          <div class="fc-face fc-front fc-front--name" id="ch-front-name" style="display:none;">
+            <div class="fc-name-only" id="ch-name-only">—</div>
+            <div class="fc-hint">Think about what this card does, then reveal</div>
+          </div>
           <div class="fc-face fc-back" id="ch-back">
             <div class="fc-back-name" id="ch-back-name"></div>
             <div class="fc-oracle" id="ch-oracle"></div>
+          </div>
+          <div class="fc-face fc-back fc-back--image" id="ch-back-image" style="display:none;">
+            <img id="ch-full-art" src="" alt="" />
           </div>
         </div>
         <div class="fc-actions" id="ch-actions-front">
