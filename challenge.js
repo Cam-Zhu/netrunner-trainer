@@ -359,6 +359,14 @@ function chReveal() {
   chEls.actionsFront.style.display = 'none';
   chEls.actionsBack.style.display  = '';
 
+  // After render, scroll rating buttons into view if they're below the fold
+  setTimeout(() => {
+    const rect = chEls.actionsBack.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight) {
+      chEls.actionsBack.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, 50);
+
   const name = a.currentCard;
   const data = typeof CARD_DATA !== 'undefined' ? CARD_DATA[name] : null;
 
