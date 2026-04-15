@@ -43,7 +43,8 @@ const STORAGE_KEY = 'nrtrainer_fc_ratings';
 
 const fc = {
   pool:        'all',    // 'decks' | 'all'
-  deckFilter:  'both',    // 'both' | 'corp' | 'runner'
+  deckFilter:  'both',   // 'both' | 'corp' | 'runner'
+  mode:        'art',    // 'art' | 'name'
   cycleFilter: '',        // cycle_id or '' for all
   setFilter:   '',        // set_id or '' for all
   typeFilter:  '',        // type key or '' for all
@@ -187,14 +188,18 @@ function buildQueue(pool) {
 const fcEls = {
   card:         document.getElementById('fc-card'),
   front:        document.getElementById('fc-front'),
+  frontName:    document.getElementById('fc-front-name'),
   back:         document.getElementById('fc-back'),
+  backImage:    document.getElementById('fc-back-image'),
   art:          document.getElementById('fc-art'),
   artPlaceholder: document.getElementById('fc-art-placeholder'),
   artWrap:      document.getElementById('fc-art-wrap'),
   cardName:     document.getElementById('fc-card-name'),
   cardMeta:     document.getElementById('fc-card-meta'),
+  nameOnly:     document.getElementById('fc-name-only'),
   backName:     document.getElementById('fc-back-name'),
   oracle:       document.getElementById('fc-oracle'),
+  fullArt:      document.getElementById('fc-full-art'),
   actionsFront: document.getElementById('fc-actions-front'),
   actionsBack:  document.getElementById('fc-actions-back'),
   progressFill: document.getElementById('fc-progress-fill'),
@@ -245,6 +250,18 @@ function bindFcToggle(groupId, key) {
 
 bindFcToggle('fc-pool-toggle',  'pool');
 bindFcToggle('fc-deck-toggle',  'deckFilter');
+
+// Mode toggle — art first vs name first
+document.getElementById('fc-mode-toggle').querySelectorAll('.toggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('fc-mode-toggle').querySelectorAll('.toggle-btn')
+      .forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    fc.mode = btn.dataset.value;
+    fc.queue = [];
+    fcResetSession();
+  });
+});
 
 // Populate cycle select from CARD_SETS
 function populateCycleSelect() {
@@ -374,31 +391,42 @@ fc.drawCard = function() {
   fc.isFlipped   = false;
   fc.session.seen++;
 
-  // Reset card UI
+  // Reset card UI — show the correct front face for the current mode
   fcEls.card.classList.remove('is-flipped');
   fcEls.actionsFront.style.display = '';
   fcEls.actionsBack.style.display  = 'none';
+  fcEls.back.style.display      = 'none';
+  fcEls.backImage.style.display = 'none';
 
-  // Artwork
-  const imgUrl = typeof CARD_IMAGES !== 'undefined' ? CARD_IMAGES[name] : null;
-  const data   = typeof CARD_DATA   !== 'undefined' ? CARD_DATA[name]   : null;
-  const isIce  = data?.type === 'ice';
-
-  if (imgUrl) {
-    fcEls.art.src = imgUrl;
-    fcEls.art.className = isIce ? 'ice-art' : '';
-    fcEls.art.style.opacity = '1';
-    fcEls.artPlaceholder.classList.add('hidden');
+  if (fc.mode === 'name') {
+    // Name-first: show only the card name, hide art front
+    fcEls.front.style.display     = 'none';
+    fcEls.frontName.style.display = '';
+    fcEls.nameOnly.textContent    = name;
   } else {
-    fcEls.art.src = '';
-    fcEls.artPlaceholder.classList.remove('hidden');
-  }
+    // Art-first: normal front face
+    fcEls.front.style.display     = '';
+    fcEls.frontName.style.display = 'none';
 
-  // Name + minimal meta (type only — no text on front)
-  fcEls.cardName.textContent = name;
-  fcEls.cardMeta.textContent = data
-    ? formatMeta(data, false)
-    : '';
+    // Artwork
+    const imgUrl = typeof CARD_IMAGES !== 'undefined' ? CARD_IMAGES[name] : null;
+    const data   = typeof CARD_DATA   !== 'undefined' ? CARD_DATA[name]   : null;
+    const isIce  = data?.type === 'ice';
+
+    if (imgUrl) {
+      fcEls.art.src = imgUrl;
+      fcEls.art.className = isIce ? 'ice-art' : '';
+      fcEls.art.style.opacity = '1';
+      fcEls.artPlaceholder.classList.add('hidden');
+    } else {
+      fcEls.art.src = '';
+      fcEls.artPlaceholder.classList.remove('hidden');
+    }
+
+    // Name + minimal meta
+    fcEls.cardName.textContent = name;
+    fcEls.cardMeta.textContent = data ? formatMeta(data, false) : '';
+  }
 
   updateProgress(pool.length);
 };
@@ -407,22 +435,37 @@ fc.drawCard = function() {
 
 function fcReveal() {
   fc.isFlipped = true;
-  fcEls.card.classList.add('is-flipped');
   fcEls.actionsFront.style.display = 'none';
   fcEls.actionsBack.style.display  = '';
 
   const name = fc.currentCard;
   const data = typeof CARD_DATA !== 'undefined' ? CARD_DATA[name] : null;
 
-  fcEls.backName.textContent = name;
-
-  if (data) {
-    const stats = formatMeta(data, true);
-    fcEls.oracle.innerHTML =
-      `<div class="fc-oracle-stats">${stats}</div>` +
-      (data.text ? escFc(data.text) : '<em>No oracle text</em>');
+  if (fc.mode === 'name') {
+    fcEls.frontName.style.display = 'none';
+    fcEls.back.style.display      = 'none';
+    fcEls.backImage.style.display = 'block';
+    const imgUrl = typeof CARD_IMAGES !== 'undefined' ? CARD_IMAGES[name] : null;
+    if (imgUrl) {
+      fcEls.fullArt.src = imgUrl.replace('/small/', '/large/');
+      fcEls.fullArt.alt = name;
+    } else {
+      fcEls.fullArt.src = '';
+    }
   } else {
-    fcEls.oracle.textContent = 'No card data available. Run the fetch script to generate card-data.js.';
+    // Art-first: normal text back
+    fcEls.front.style.display = 'none';
+    fcEls.back.style.display  = 'block';
+    fcEls.backImage.style.display = 'none';
+    fcEls.backName.textContent = name;
+    if (data) {
+      const stats = formatMeta(data, true);
+      fcEls.oracle.innerHTML =
+        `<div class="fc-oracle-stats">${stats}</div>` +
+        (data.text ? escFc(data.text) : '<em>No oracle text</em>');
+    } else {
+      fcEls.oracle.textContent = 'No card data available. Run the fetch script to generate card-data.js.';
+    }
   }
 }
 
@@ -528,10 +571,14 @@ function fcResetSession() {
   fcEls.weakList.innerHTML = '';
   fcEls.weakCount.textContent = '';
   Object.keys(sessionWeak).forEach(k => delete sessionWeak[k]);
-  // Restore hint text and art wrap in case session-complete replaced them
+  // Restore hint text and face visibility
   const hintEl = fcEls.front.querySelector('.fc-hint');
   if (hintEl) hintEl.innerHTML = 'Think about what this card does, then reveal';
+  const hintElName = fcEls.frontName.querySelector('.fc-hint');
+  if (hintElName) hintElName.innerHTML = 'Think about what this card does, then reveal';
   fcEls.artWrap.style.display = '';
+  fcEls.back.style.display      = 'none';
+  fcEls.backImage.style.display = 'none';
   fc.drawCard();
 }
 // ─── Session complete ─────────────────────────────────────────────────────────
@@ -540,7 +587,11 @@ function showPass2Banner(weakCount) {
   fc.currentCard = null;
   fcEls.actionsFront.style.display = 'none';
   fcEls.actionsBack.style.display  = 'none';
-  fcEls.card.classList.remove('is-flipped');
+  fcEls.back.style.display      = 'none';
+  fcEls.backImage.style.display = 'none';
+  // Always show art-first face for summary — it has the hint element we repurpose
+  fcEls.front.style.display     = '';
+  fcEls.frontName.style.display = 'none';
   fcEls.cardName.textContent = 'Pass 1 complete';
   fcEls.cardMeta.textContent = '';
   fcEls.artWrap.style.display = 'none';
@@ -572,17 +623,17 @@ function showSessionComplete(poolSize) {
   const pct   = total > 0 ? Math.round((knew / total) * 100) : 0;
   const weakCount = Object.keys(sessionWeak).length;
 
-  // Hide card and action buttons
   fcEls.actionsFront.style.display = 'none';
   fcEls.actionsBack.style.display  = 'none';
-  fcEls.card.classList.remove('is-flipped');
-
-  // Repurpose the card face to show the summary
+  fcEls.back.style.display      = 'none';
+  fcEls.backImage.style.display = 'none';
+  // Always use art-first face for the summary
+  fcEls.front.style.display     = '';
+  fcEls.frontName.style.display = 'none';
   fcEls.cardName.textContent = 'Session complete';
   fcEls.cardMeta.textContent = '';
   fcEls.artWrap.style.display = 'none';
 
-  // Replace the hint text with a summary
   const hintEl = fcEls.front.querySelector('.fc-hint');
   if (hintEl) {
     hintEl.innerHTML =
