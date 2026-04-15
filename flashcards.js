@@ -438,6 +438,14 @@ function fcReveal() {
   fcEls.actionsFront.style.display = 'none';
   fcEls.actionsBack.style.display  = '';
 
+  // After render, scroll rating buttons into view if they're below the fold
+  setTimeout(() => {
+    const rect = fcEls.actionsBack.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight) {
+      fcEls.actionsBack.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, 50);
+
   const name = fc.currentCard;
   const data = typeof CARD_DATA !== 'undefined' ? CARD_DATA[name] : null;
 
