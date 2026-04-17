@@ -155,12 +155,12 @@ function initSkillTree() {
           const total = branch.nodes.length;
           const complete = done === total;
           return `
-            <div class="st-branch ${complete ? 'st-branch--complete' : ''}">
-              <div class="st-branch-header" style="--branch-color:${branch.color}">
+            <details class="st-branch ${complete ? 'st-branch--complete' : ''}">
+              <summary class="st-branch-header" style="--branch-color:${branch.color}">
                 <div class="st-branch-label">${branch.label}</div>
                 <div class="st-branch-sub">${branch.sublabel}</div>
                 <div class="st-branch-count">${done}/${total}</div>
-              </div>
+              </summary>
               <div class="st-nodes">
                 ${branch.nodes.map(node => {
                   const checked = isChecked(node.id, node.auto);
@@ -173,7 +173,7 @@ function initSkillTree() {
                     </div>`;
                 }).join('')}
               </div>
-            </div>`;
+            </details>`;
         }).join('')}
       </div>
       ${checked === total ? '<div class="st-complete-msg">All milestones reached. Netrunner mastery unlocked.</div>' : ''}
