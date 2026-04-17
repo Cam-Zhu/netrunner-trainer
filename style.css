@@ -1135,7 +1135,12 @@ kbd {
   border-bottom: 1px solid var(--border);
   display: flex; align-items: baseline; gap: 8px;
   background: var(--bg-raised);
+  list-style: none; cursor: pointer; user-select: none;
+  transition: background 0.15s;
 }
+.st-branch-header::-webkit-details-marker { display: none; }
+.st-branch-header:hover { background: var(--bg-card); }
+.st-branch[open] > .st-branch-header { border-bottom: 1px solid var(--border); }
 .st-branch-label {
   font-family: var(--font-display); font-size: 0.82rem; font-weight: 700;
   color: var(--branch-color, var(--accent));
