@@ -136,6 +136,12 @@ function initSkillTree() {
   }
 
   function render() {
+    // Remember which branches are open before rebuilding
+    const openBranches = new Set(
+      [...container.querySelectorAll('details.st-branch[open]')]
+        .map(el => el.dataset.branch)
+    );
+
     const checked = totalChecked();
     const total = BRANCHES.reduce((s, b) => s + b.nodes.length, 0);
 
@@ -155,7 +161,7 @@ function initSkillTree() {
           const total = branch.nodes.length;
           const complete = done === total;
           return `
-            <details class="st-branch ${complete ? 'st-branch--complete' : ''}">
+            <details class="st-branch ${complete ? 'st-branch--complete' : ''}" data-branch="${branch.id}">
               <summary class="st-branch-header" style="--branch-color:${branch.color}">
                 <div class="st-branch-label">${branch.label}</div>
                 <div class="st-branch-sub">${branch.sublabel}</div>
@@ -179,9 +185,15 @@ function initSkillTree() {
       ${checked === total ? '<div class="st-complete-msg">All milestones reached. Netrunner mastery unlocked.</div>' : ''}
     `;
 
+    // Restore open state
+    container.querySelectorAll('details.st-branch').forEach(el => {
+      if (openBranches.has(el.dataset.branch)) el.open = true;
+    });
+
     // Click handlers for manual nodes only
     container.querySelectorAll('.st-node:not([data-auto="true"])').forEach(el => {
-      el.addEventListener('click', () => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
         const id = el.dataset.id;
         treeState[id] = !treeState[id];
         saveTreeState(treeState);
