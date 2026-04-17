@@ -22,6 +22,7 @@ function switchPage(page) {
   if (page === 'challenge') ch.renderLevelMap();
   if (page === 'mechanics') window.initMechanicsOnce();
   if (page === 'rules') window.initRulesOnce();
+  if (page === 'start') window.initSkillTreeOnce();
 
   // Update URL hash so the link is bookmarkable / shareable
   history.replaceState(null, '', page === 'start' ? ' ' : `#${page}`);
@@ -570,6 +571,13 @@ function updateWeakList(name, result) {
 // ─── Reset session ────────────────────────────────────────────────────────────
 
 function fcResetSession() {
+  // Record completed session by mode before resetting
+  if (fc.session.seen > 0) {
+    try {
+      const key = fc.mode === 'name' ? 'nrtrainer_fc_session_name' : 'nrtrainer_fc_session_art';
+      localStorage.setItem(key, '1');
+    } catch {}
+  }
   fc.session = { knew: 0, unsure: 0, blank: 0, seen: 0 };
   fc.queue   = [];
   fc.pass    = 1;
@@ -688,5 +696,8 @@ function escFc(s) {
   const hash = window.location.hash.replace('#', '').trim();
   if (hash && VALID_PAGES.includes(hash)) {
     switchPage(hash);
+  } else {
+    // Default page is start — initialise skill tree
+    window.initSkillTreeOnce();
   }
 })();
