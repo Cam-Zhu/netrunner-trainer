@@ -89,12 +89,34 @@ function shuffle(arr) {
   return a;
 }
 
+const STORAGE_KEY_DECKS = 'nrtrainer_decks';
+
+function loadSavedDecks() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_DECKS) || '{}');
+    return {
+      corp:   saved.corp   || DEFAULTS.corp,
+      runner: saved.runner || DEFAULTS.runner,
+    };
+  } catch { return { corp: DEFAULTS.corp, runner: DEFAULTS.runner }; }
+}
+
+function saveDeckToStorage(side, text) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_DECKS) || '{}');
+    saved[side] = text;
+    localStorage.setItem(STORAGE_KEY_DECKS, JSON.stringify(saved));
+  } catch {}
+}
+
 // ─── App state ───────────────────────────────────────────────────────────────
+
+const savedDecks = loadSavedDecks();
 
 const state = {
   activeDeck:   'corp',
   mode:         'opening',
-  decks:        { corp: parseDeck(DEFAULTS.corp), runner: parseDeck(DEFAULTS.runner) },
+  decks:        { corp: parseDeck(savedDecks.corp), runner: parseDeck(savedDecks.runner) },
   hand:         [],
   selectedCard: null,
   mulligans:    0,
@@ -120,8 +142,8 @@ const els = {
 
 // ─── Initialise inputs ───────────────────────────────────────────────────────
 
-els.corpInput.value   = DEFAULTS.corp;
-els.runnerInput.value = DEFAULTS.runner;
+els.corpInput.value   = savedDecks.corp;
+els.runnerInput.value = savedDecks.runner;
 
 // ─── Toggle controls ─────────────────────────────────────────────────────────
 
@@ -412,6 +434,7 @@ function saveDeck(side) {
   const text   = input.value.trim();
   if (!text) { status.textContent = 'Nothing to save.'; return; }
   state.decks[side] = parseDeck(text);
+  saveDeckToStorage(side, text);
   status.textContent = `Saved — ${state.decks[side].length} cards in pool`;
   if (state.activeDeck === side) resetHand();
 }
