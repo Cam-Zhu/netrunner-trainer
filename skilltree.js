@@ -109,7 +109,185 @@ function detectAutoNodes() {
   return detected;
 }
 
-// ─── Render ───────────────────────────────────────────────────────────────────
+// ─── Neural trace effect ──────────────────────────────────────────────────────
+
+const SPARK_THRESHOLDS = [5, 10, 15, 20];
+
+const TRACE_COLOURS = [
+  '#00e5a0', // accent (cyan)
+  '#f0a500', // warn (amber)
+  '#4a9eff', // corp (blue)
+  '#c084fc', // runner (purple)
+];
+
+function fireSparks(tier) {
+  const nodeCounts   = [16, 32, 52, 80];
+  const durations    = [1200, 1800, 2600, 3600];
+  const nodeCount    = nodeCounts[tier - 1];
+  const ms           = durations[tier - 1];
+
+  let canvas = document.getElementById('st-spark-canvas');
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+    canvas.id = 'st-spark-canvas';
+    canvas.style.cssText = `
+      position:fixed; inset:0; width:100%; height:100%;
+      pointer-events:none; z-index:9999;
+    `;
+    document.body.appendChild(canvas);
+  }
+
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+
+  const W = canvas.width;
+  const H = canvas.height;
+
+  // Generate nodes scattered across the viewport
+  const nodes = Array.from({ length: nodeCount }, (_, i) => ({
+    x:      W * (0.08 + Math.random() * 0.84),
+    y:      H * (0.08 + Math.random() * 0.84),
+    r:      tier >= 3 ? 4 + Math.random() * 3 : 3 + Math.random() * 2,
+    colour: TRACE_COLOURS[i % TRACE_COLOURS.length],
+    lit:    false,
+    litAt:  null,
+    pulse:  0,
+  }));
+
+  // Build edges — each node connects to its 2–3 nearest neighbours
+  const edges = [];
+  const maxEdgeDist = Math.min(W, H) * (0.18 + tier * 0.04);
+  nodes.forEach((a, i) => {
+    const neighbours = nodes
+      .map((b, j) => ({ j, d: Math.hypot(b.x - a.x, b.y - a.y) }))
+      .filter(({ j, d }) => j !== i && d < maxEdgeDist)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2 + tier);
+    neighbours.forEach(({ j }) => {
+      if (!edges.find(e => (e.a === i && e.b === j) || (e.a === j && e.b === i))) {
+        edges.push({ a: i, b: j, progress: 0, active: false, colour: nodes[i].colour });
+      }
+    });
+  });
+
+  // Cascade: start from a random node, spread outward through edges
+  const cascade = [];
+  let delay = 0;
+  const delayStep = ms * 0.06;
+  const visited = new Set();
+
+  function scheduleNode(idx) {
+    if (visited.has(idx)) return;
+    visited.add(idx);
+    cascade.push({ idx, delay });
+    delay += delayStep * (0.5 + Math.random() * 0.5);
+    // Schedule connected nodes
+    edges
+      .filter(e => e.a === idx || e.b === idx)
+      .forEach(e => scheduleNode(e.a === idx ? e.b : e.a));
+  }
+  scheduleNode(Math.floor(Math.random() * nodeCount));
+  // Any unvisited nodes (disconnected) get scheduled after
+  nodes.forEach((_, i) => { if (!visited.has(i)) scheduleNode(i); });
+
+  const start = performance.now();
+
+  function frame(now) {
+    const elapsed = now - start;
+    ctx.clearRect(0, 0, W, H);
+
+    // Light up nodes per cascade schedule
+    cascade.forEach(({ idx, delay: d }) => {
+      if (elapsed >= d && !nodes[idx].lit) {
+        nodes[idx].lit   = true;
+        nodes[idx].litAt = elapsed;
+        // Activate edges connected to this node where other end is also lit
+        edges.forEach(e => {
+          if ((e.a === idx && nodes[e.b].lit) || (e.b === idx && nodes[e.a].lit)) {
+            e.active = true;
+            e.startAt = elapsed;
+          }
+        });
+      }
+    });
+
+    const fadeStart = ms * 0.65;
+    const fadeEnd   = ms * 1.1;
+
+    // Draw edges
+    edges.forEach(e => {
+      if (!e.active) return;
+      const age = elapsed - e.startAt;
+      const edgeDur = 300 + tier * 80;
+      const drawProgress = Math.min(age / edgeDur, 1);
+      const a_node = nodes[e.a];
+      const b_node = nodes[e.b];
+      const ex = a_node.x + (b_node.x - a_node.x) * drawProgress;
+      const ey = a_node.y + (b_node.y - a_node.y) * drawProgress;
+
+      let alpha = 0.7;
+      if (elapsed > fadeStart) alpha *= 1 - (elapsed - fadeStart) / (fadeEnd - fadeStart);
+      alpha = Math.max(0, alpha);
+
+      ctx.beginPath();
+      ctx.moveTo(a_node.x, a_node.y);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = e.colour;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth   = tier >= 3 ? 1.5 : 1;
+      ctx.stroke();
+    });
+
+    // Draw nodes
+    nodes.forEach(node => {
+      if (!node.lit) return;
+      const age = elapsed - node.litAt;
+      node.pulse = Math.min(age / 200, 1);
+
+      let alpha = 1;
+      if (elapsed > fadeStart) alpha *= 1 - (elapsed - fadeStart) / (fadeEnd - fadeStart);
+      alpha = Math.max(0, alpha);
+
+      const r = node.r * (0.5 + node.pulse * 0.5);
+
+      // Outer glow ring
+      if (tier >= 2) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, r * 3, 0, Math.PI * 2);
+        ctx.fillStyle   = node.colour;
+        ctx.globalAlpha = alpha * 0.08 * node.pulse;
+        ctx.fill();
+      }
+
+      // Core node
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+      ctx.fillStyle   = node.colour;
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+
+      // Bright centre
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, r * 0.45, 0, Math.PI * 2);
+      ctx.fillStyle   = '#ffffff';
+      ctx.globalAlpha = alpha * 0.7 * node.pulse;
+      ctx.fill();
+    });
+
+    ctx.globalAlpha = 1;
+
+    if (elapsed < fadeEnd) {
+      requestAnimationFrame(frame);
+    } else {
+      ctx.clearRect(0, 0, W, H);
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 function initSkillTree() {
   const container = document.getElementById('skill-tree-root');
@@ -195,8 +373,16 @@ function initSkillTree() {
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = el.dataset.id;
+        const prevCount = totalChecked();
         treeState[id] = !treeState[id];
         saveTreeState(treeState);
+        const newCount = totalChecked();
+        // Fire sparks if a threshold was crossed upward
+        SPARK_THRESHOLDS.forEach((thresh, i) => {
+          if (prevCount < thresh && newCount >= thresh) {
+            fireSparks(i + 1);
+          }
+        });
         render();
       });
     });
