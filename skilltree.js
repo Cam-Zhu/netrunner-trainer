@@ -147,7 +147,7 @@ function initSkillTree() {
 
     container.innerHTML = `
       <div class="st-header">
-        <div class="st-title">Runner's Journey</div>
+        <div class="st-title">The Run Log</div>
         <div class="st-progress-wrap">
           <div class="st-progress-bar">
             <div class="st-progress-fill" style="width:${Math.round(checked/total*100)}%"></div>
