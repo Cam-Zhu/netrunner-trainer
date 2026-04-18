@@ -121,8 +121,8 @@ const TRACE_COLOURS = [
 ];
 
 function fireSparks(tier) {
-  const nodeCounts   = [16, 32, 52, 80];
-  const durations    = [1200, 1800, 2600, 3600];
+  const nodeCounts   = [8, 16, 26, 40];
+  const durations    = [800, 1200, 1800, 2600];
   const nodeCount    = nodeCounts[tier - 1];
   const ms           = durations[tier - 1];
 
@@ -377,11 +377,16 @@ function initSkillTree() {
         treeState[id] = !treeState[id];
         saveTreeState(treeState);
         const newCount = totalChecked();
-        // Fire sparks if a threshold was crossed upward
+
+        // Visual only fires when checking (count increased), not unchecking
+        if (newCount > prevCount) {
+          const tier = newCount >= 15 ? 3 : newCount >= 10 ? 2 : newCount >= 5 ? 2 : 1;
+          fireSparks(tier);
+        }
+
+        // Plausible event — only on first ever threshold crossing
         SPARK_THRESHOLDS.forEach((thresh, i) => {
           if (prevCount < thresh && newCount >= thresh) {
-            fireSparks(i + 1);
-            // Plausible event — only on first ever crossing
             try {
               const firedKey = 'nrtrainer_runlog_fired';
               const fired = JSON.parse(localStorage.getItem(firedKey) || '[]');
