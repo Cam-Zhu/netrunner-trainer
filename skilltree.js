@@ -381,6 +381,18 @@ function initSkillTree() {
         SPARK_THRESHOLDS.forEach((thresh, i) => {
           if (prevCount < thresh && newCount >= thresh) {
             fireSparks(i + 1);
+            // Plausible event — only on first ever crossing
+            try {
+              const firedKey = 'nrtrainer_runlog_fired';
+              const fired = JSON.parse(localStorage.getItem(firedKey) || '[]');
+              if (!fired.includes(thresh)) {
+                fired.push(thresh);
+                localStorage.setItem(firedKey, JSON.stringify(fired));
+                if (typeof window.plausible !== 'undefined') {
+                  window.plausible('Run Log milestone', { props: { threshold: thresh } });
+                }
+              }
+            } catch {}
           }
         });
         render();
