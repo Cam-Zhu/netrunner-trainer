@@ -12,9 +12,9 @@ const BRANCHES = [
     sublabel: 'Community',
     color: 'var(--runner)',
     nodes: [
-      { id: 'c1', text: 'Played a game on Jinteki.net' },
-      { id: 'c2', text: 'Created a NetrunnerDB account' },
-      { id: 'c3', text: 'Joined a community Discord or Slack' },
+      { id: 'c1', text: 'Created a NetrunnerDB account' },
+      { id: 'c2', text: 'Joined a community Discord or Slack' },
+      { id: 'c3', text: 'Played a game on Jinteki.net' },
       { id: 'c4', text: 'Attended a local meetup or game night' },
       { id: 'c5', text: 'Published a decklist publicly' },
     ],
