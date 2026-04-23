@@ -654,7 +654,7 @@ input[type=range]::-webkit-slider-thumb {
   margin-top: 1rem;
 }
 .sh-heading {
-  font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em;
+  font-size: 0.95rem; font-weight: 500; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--accent-dim);
   font-family: var(--font-mono); margin-bottom: 1rem;
 }
