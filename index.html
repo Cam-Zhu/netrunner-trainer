@@ -51,9 +51,6 @@
   <nav class="page-nav">
     <button class="page-tab active" data-page="start">Start here</button>
     <button class="page-tab" data-page="decks">My decks</button>
-    <!-- Hand trainer hidden pending coaching improvements
-    <button class="page-tab" data-page="trainer">Hand trainer</button>
-    -->
     <button class="page-tab" data-page="flashcards">Flashcards</button>
     <button class="page-tab" data-page="challenge">Challenge</button>
     <button class="page-tab" data-page="rules">Play helper</button>
@@ -70,7 +67,7 @@
 
     <section class="sh-section">
       <h2 class="sh-heading">What is Android: Netrunner?</h2>
-      <p class="sh-body">Android: Netrunner is an asymmetric two-player card game set in a cyberpunk future. One player is the <strong>Corp</strong>, building remote servers, defending them with ICE (think firewalls), and trying to score agendas. The other is the <strong>Runner</strong>, hacking into those servers to steal the agendas. Every decision is a resource calculation: clicks, credits, and cards are finite.</p>
+      <p class="sh-body">Android: Netrunner is an asymmetric two-player card game set in a cyberpunk future. One player is the <strong>Corp</strong>, building remote servers, defending them with ice (think firewalls), and trying to score agendas. The other is the <strong>Runner</strong>, hacking into those servers to steal the agendas. Every decision is a resource calculation: clicks, credits, and cards are finite.</p>
       <p class="sh-body">The game is now published by <strong>Null Signal Games</strong>, a non-profit fan organisation that has continued developing new cards and running organised play since Fantasy Flight Games discontinued the game in 2018.</p>
       <div class="sh-links">
         <a class="sh-link" href="https://nullsignal.games" target="_blank" rel="noopener">
@@ -140,10 +137,10 @@
   <!-- PAGE: MY DECKS -->
   <main id="page-decks" style="display:none;">
     <section class="deck-editors">
-      <details class="deck-editor" id="editor-corp" open>
+      <details class="deck-editor" id="editor-corp">
         <summary>Corp deck</summary>
         <div class="editor-inner">
-          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>.</p>
+          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>. Include your identity card for accurate influence analysis.</p>
           <textarea id="corp-input" spellcheck="false"></textarea>
           <div class="editor-footer">
             <span class="editor-status" id="corp-status"></span>
@@ -151,10 +148,10 @@
           </div>
         </div>
       </details>
-      <details class="deck-editor" id="editor-runner" open>
+      <details class="deck-editor" id="editor-runner">
         <summary>Runner deck</summary>
         <div class="editor-inner">
-          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>.</p>
+          <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>. Include your identity card for accurate influence analysis.</p>
           <textarea id="runner-input" spellcheck="false"></textarea>
           <div class="editor-footer">
             <span class="editor-status" id="runner-status"></span>
@@ -163,55 +160,24 @@
         </div>
       </details>
     </section>
-  </main>
 
-  <!-- PAGE: HAND TRAINER (hidden) -->
-  <main id="page-trainer" style="display:none;">
-    <section class="controls-bar">
-      <div class="control-group">
-        <label class="ctrl-label">Deck</label>
-        <div class="toggle-group" id="deck-toggle">
-          <button class="toggle-btn active" data-value="corp">Corp</button>
-          <button class="toggle-btn" data-value="runner">Runner</button>
+    <!-- Deck Analysis Dashboard -->
+    <section class="da-section">
+      <div class="da-header">
+        <div>
+          <div class="da-title">Deck Analysis</div>
+          <div class="da-subtitle">Figures computed directly from card data — no estimates</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn da-toggle-btn active" data-side="corp">Corp</button>
+          <button class="toggle-btn da-toggle-btn" data-side="runner">Runner</button>
         </div>
       </div>
-      <div class="control-group">
-        <label class="ctrl-label">Mode <span class="ctrl-label-sub">— affects Analyse full hand</span></label>
-        <div class="toggle-group" id="mode-toggle">
-          <button class="toggle-btn active" data-value="opening">Opening</button>
-          <button class="toggle-btn" data-value="card">Card focus</button>
-          <button class="toggle-btn" data-value="situation">Mid-game</button>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="ctrl-label">Hand size <span id="hand-size-out">5</span></label>
-        <input type="range" min="3" max="7" value="5" id="hand-size" />
+      <div id="da-root">
+        <div class="da-empty">Save a deck above to see analysis.</div>
       </div>
     </section>
-    <section class="hand-section">
-      <div class="hand-meta">
-        <span id="hand-status">No hand drawn yet</span>
-        <div class="hand-actions">
-          <button class="btn btn-ghost" id="mulligan-btn" disabled>Mulligan</button>
-          <button class="btn btn-primary" id="draw-btn">Draw hand</button>
-        </div>
-      </div>
-      <div class="hand-grid" id="hand-grid">
-        <div class="empty-hand">
-          <span class="empty-icon">&#9632;</span>
-          <span>Draw a hand to begin</span>
-        </div>
-      </div>
-    </section>
-    <section class="coach-panel">
-      <div class="coach-header">
-        <span class="coach-label">// COACH OUTPUT</span>
-        <button class="btn btn-ghost btn-sm" id="analyse-btn" disabled>Analyse full hand</button>
-      </div>
-      <div class="coach-body" id="coach-body">
-        <span class="coach-placeholder">Select a card or analyse your hand &mdash; coaching will appear here.</span>
-      </div>
-    </section>
+
   </main>
 
   <!-- PAGE: FLASHCARDS -->
@@ -420,6 +386,7 @@
   <script src="card-sets.js"></script>
   <script src="app.js"></script>
   <script src="skilltree.js"></script>
+  <script src="deckanalysis.js"></script>
   <script src="flashcards.js"></script>
   <script src="challenge.js"></script>
 
