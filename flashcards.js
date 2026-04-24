@@ -1,6 +1,6 @@
 // ─── Page navigation ─────────────────────────────────────────────────────────
 
-const VALID_PAGES = ['start', 'decks', 'trainer', 'flashcards', 'challenge', 'rules', 'mechanics'];
+const VALID_PAGES = ['start', 'decks', 'flashcards', 'challenge', 'rules', 'mechanics'];
 
 function switchPage(page) {
   // Validate — fall back to start if unknown or hidden tab
@@ -12,7 +12,6 @@ function switchPage(page) {
 
   document.getElementById('page-start').style.display      = page === 'start'      ? '' : 'none';
   document.getElementById('page-decks').style.display      = page === 'decks'      ? '' : 'none';
-  document.getElementById('page-trainer').style.display    = page === 'trainer'    ? '' : 'none';
   document.getElementById('page-flashcards').style.display = page === 'flashcards' ? '' : 'none';
   document.getElementById('page-challenge').style.display  = page === 'challenge'  ? '' : 'none';
   document.getElementById('page-rules').style.display      = page === 'rules'      ? '' : 'none';
@@ -23,6 +22,7 @@ function switchPage(page) {
   if (page === 'mechanics') window.initMechanicsOnce();
   if (page === 'rules') window.initRulesOnce();
   if (page === 'start') window.initSkillTreeOnce();
+  if (page === 'decks') initDeckAnalysis();
 
   // Update URL hash so the link is bookmarkable / shareable
   history.replaceState(null, '', page === 'start' ? ' ' : `#${page}`);
