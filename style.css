@@ -1201,6 +1201,174 @@ kbd {
   color: var(--accent); text-align: center; letter-spacing: 0.03em;
 }
 
+/* ── Deck Analysis Dashboard ──────────────────────────────────────────────── */
+
+.da-section { margin-top: 2rem; }
+
+.da-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.da-title {
+  font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.da-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.da-panel {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 14px 16px;
+}
+.da-panel-title {
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+  color: var(--text); text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+.da-panel-sub {
+  font-weight: 400; color: var(--text-dim); text-transform: none;
+  letter-spacing: 0; font-size: 0.68rem;
+}
+
+.da-subtitle {
+  font-size: 0.65rem; font-family: var(--font-mono);
+  color: var(--text-mute); margin-top: 2px;
+}
+  font-size: 0.78rem; color: var(--text-mute);
+  font-family: var(--font-mono); padding: 1rem 0;
+  text-align: center;
+}
+.da-flag {
+  font-size: 0.72rem; font-family: var(--font-mono);
+  color: var(--danger);
+}
+.da-none {
+  font-size: 0.72rem; font-family: var(--font-mono);
+  color: var(--text-mute);
+}
+
+/* Breaker coverage */
+.da-breaker-grid { display: flex; flex-direction: column; gap: 6px; }
+.da-breaker-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 8px; border-radius: var(--radius);
+  background: var(--bg);
+}
+.da-breaker-row--missing { background: color-mix(in srgb, var(--danger) 8%, var(--bg)); }
+.da-breaker-type {
+  font-size: 0.68rem; font-family: var(--font-mono);
+  color: var(--text-dim); width: 68px; flex-shrink: 0;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.da-breaker-cards { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+.da-breaker-name {
+  font-size: 0.72rem; color: var(--text);
+}
+.da-breaker-qty {
+  font-size: 0.68rem; color: var(--text-dim);
+  font-family: var(--font-mono); margin-left: 2px;
+}
+
+/* ICE composition */
+.da-ice-grid { display: flex; flex-direction: column; gap: 6px; }
+.da-ice-row { display: flex; align-items: center; gap: 8px; }
+.da-ice-label {
+  font-size: 0.68rem; font-family: var(--font-mono);
+  color: var(--text-dim); width: 68px; flex-shrink: 0;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.da-ice-count {
+  font-size: 0.68rem; font-family: var(--font-mono);
+  color: var(--text-dim); width: 20px; text-align: right;
+}
+
+/* Shared bar */
+.da-bar-wrap {
+  flex: 1; height: 6px; background: var(--border);
+  border-radius: 3px; overflow: hidden;
+}
+.da-bar {
+  height: 100%; border-radius: 3px;
+  background: var(--accent); transition: width 0.4s ease;
+}
+.da-bar--inf { background: var(--runner); }
+.da-bar--over { background: var(--danger); }
+
+/* Agenda density */
+.da-agenda-list { display: flex; flex-direction: column; gap: 3px; margin-bottom: 10px; }
+.da-agenda-item { display: flex; justify-content: space-between; align-items: baseline; }
+.da-agenda-name { font-size: 0.76rem; color: var(--text); }
+.da-agenda-detail { font-size: 0.65rem; font-family: var(--font-mono); color: var(--text-dim); }
+.da-stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-top: 6px;
+}
+.da-stat {
+  background: var(--bg); border-radius: var(--radius);
+  padding: 6px 8px; text-align: center;
+}
+.da-stat--warn .da-stat-value { color: var(--danger); }
+.da-stat-value {
+  font-family: var(--font-mono); font-size: 1rem; font-weight: 700;
+  color: var(--accent);
+}
+.da-stat-label {
+  font-size: 0.62rem; color: var(--text-mute);
+  font-family: var(--font-mono); margin-top: 2px; line-height: 1.3;
+}
+
+/* Influence breakdown */
+.da-inf-total-bar {
+  height: 4px; background: var(--border); border-radius: 2px;
+  overflow: hidden; margin-bottom: 8px;
+}
+.da-inf-total-fill {
+  height: 100%; background: var(--runner); border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.da-inf-grid { display: flex; flex-direction: column; gap: 5px; }
+.da-inf-row { display: flex; align-items: center; gap: 8px; }
+.da-inf-name { font-size: 0.72rem; color: var(--text); flex: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.da-inf-cost {
+  font-size: 0.65rem; font-family: var(--font-mono);
+  color: var(--text-dim); width: 28px; text-align: right; flex-shrink: 0;
+}
+
+/* Install curve */
+.da-curve {
+  display: flex; align-items: flex-end; gap: 4px;
+  height: 80px; padding-bottom: 20px; position: relative;
+}
+.da-curve-col {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; height: 100%;
+}
+.da-curve-bar-wrap {
+  flex: 1; width: 100%; display: flex;
+  align-items: flex-end; justify-content: center;
+}
+.da-curve-bar {
+  width: 70%; background: var(--corp);
+  border-radius: 2px 2px 0 0; min-height: 2px;
+  transition: height 0.4s ease;
+}
+.da-curve-count {
+  font-size: 0.6rem; font-family: var(--font-mono);
+  color: var(--text-dim); height: 12px; line-height: 12px;
+}
+.da-curve-label {
+  font-size: 0.6rem; font-family: var(--font-mono);
+  color: var(--text-mute); height: 12px; line-height: 12px;
+}
+
+@media (max-width: 600px) {
+  .da-grid { grid-template-columns: 1fr; }
+}
+
 /* responsive */
 @media (max-width: 600px) {
   header { padding: 1rem; flex-direction: column; gap: 4px; }
