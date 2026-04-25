@@ -46,6 +46,49 @@ function parseDeckForAnalysis(deckArray) {
   }).filter(c => c.data); // skip unresolved cards
 }
 
+// ─── Faction colour + label map ───────────────────────────────────────────────
+
+const FACTION_META = {
+  haas_bioroid:       { label: 'Haas-Bioroid',        color: '#4a9eff' },
+  jinteki:            { label: 'Jinteki',              color: '#e05555' },
+  nbn:                { label: 'NBN',                  color: '#f0a500' },
+  weyland_consortium: { label: 'Weyland Consortium',   color: '#4caf50' },
+  anarch:             { label: 'Anarch',               color: '#e05555' },
+  criminal:           { label: 'Criminal',             color: '#4a9eff' },
+  shaper:             { label: 'Shaper',               color: '#4caf50' },
+  adam:               { label: 'Adam',                 color: '#f0a500' },
+  apex:               { label: 'Apex',                 color: '#e05555' },
+  sunny_lebeau:       { label: 'Sunny Lebeau',         color: '#c084fc' },
+  neutral_corp:       { label: 'Neutral',              color: '#5a6478' },
+  neutral_runner:     { label: 'Neutral',              color: '#5a6478' },
+};
+
+function renderIdentityBar(identity) {
+  if (!identity) {
+    return `<div class="da-id-bar da-id-bar--empty">No identity card found — paste your full decklist including the identity line for faction analysis.</div>`;
+  }
+
+  const { name, data } = identity;
+  const faction = FACTION_META[data.faction] || { label: data.faction, color: 'var(--text-dim)' };
+  const extras = [];
+  if (data.link)     extras.push(`${data.link}⟡ link`);
+  if (data.min_deck) extras.push(`${data.min_deck} card minimum`);
+  if (data.inf_limit != null) extras.push(`${data.inf_limit} influence`);
+
+  return `
+    <div class="da-id-bar" style="--id-color:${faction.color};">
+      <div class="da-id-accent"></div>
+      <div class="da-id-body">
+        <div class="da-id-top">
+          <span class="da-id-name">${name}</span>
+          <span class="da-id-faction">${faction.label}</span>
+        </div>
+        <div class="da-id-text">${data.text || ''}</div>
+        ${extras.length ? `<div class="da-id-extras">${extras.join(' · ')}</div>` : ''}
+      </div>
+    </div>`;
+}
+
 // ─── Panel renderers ──────────────────────────────────────────────────────────
 
 function renderBreakerCoverage(cards) {
@@ -287,6 +330,53 @@ function renderInstallCurve(cards) {
     </div>`;
 }
 
+function renderMemoryUsage(cards) {
+  const BASE_MU = 4;
+  const programs = cards.filter(c => c.data.type === 'program' && c.data.mu_cost != null);
+
+  if (programs.length === 0) {
+    return `
+      <div class="da-panel">
+        <div class="da-panel-title">Memory Usage</div>
+        <div class="da-empty">No programs in deck</div>
+      </div>`;
+  }
+
+  const totalMU = programs.reduce((s, c) => s + c.data.mu_cost, 0);
+  const overLimit = totalMU > BASE_MU;
+
+  const rows = programs
+    .sort((a, b) => b.data.mu_cost - a.data.mu_cost)
+    .map(c => {
+      const mu = c.data.mu_cost;
+      const pct = Math.min(100, Math.round((mu / totalMU) * 100));
+      return `
+        <div class="da-inf-row">
+          <div class="da-inf-name">${c.name}</div>
+          <div class="da-bar-wrap">
+            <div class="da-bar da-bar--mu" style="width:${pct}%"></div>
+          </div>
+          <div class="da-inf-cost">${mu}MU</div>
+        </div>`;
+    }).join('');
+
+  return `
+    <div class="da-panel">
+      <div class="da-panel-title">Full Memory Usage <span class="da-panel-sub">${totalMU}MU total${overLimit ? ' — exceeds base 4MU' : ''}</span></div>
+      <div class="da-stats-grid" style="margin-bottom:10px;">
+        <div class="da-stat ${overLimit ? 'da-stat--warn' : ''}">
+          <div class="da-stat-value">${totalMU}</div>
+          <div class="da-stat-label">MU required (full rig)</div>
+        </div>
+        <div class="da-stat">
+          <div class="da-stat-value">${totalMU - BASE_MU > 0 ? '+' + (totalMU - BASE_MU) : BASE_MU - totalMU}</div>
+          <div class="da-stat-label">${totalMU > BASE_MU ? 'MU support needed' : 'MU headroom'}</div>
+        </div>
+      </div>
+      <div class="da-inf-grid">${rows}</div>
+    </div>`;
+}
+
 // ─── Main render ──────────────────────────────────────────────────────────────
 
 function renderDeckAnalysis(side) {
@@ -315,6 +405,7 @@ function renderDeckAnalysis(side) {
   const panels = side === 'runner'
     ? [
         renderBreakerCoverage(cards),
+        renderMemoryUsage(cards),
         renderInstallCurve(cards),
         renderInfluenceBreakdown(cards, identity),
       ]
@@ -325,7 +416,7 @@ function renderDeckAnalysis(side) {
         renderInfluenceBreakdown(cards, identity),
       ];
 
-  root.innerHTML = `<div class="da-grid">${panels.join('')}</div>`;
+  root.innerHTML = renderIdentityBar(identity) + `<div class="da-grid">${panels.join('')}</div>`;
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
@@ -343,7 +434,17 @@ function initDeckAnalysis() {
     });
   });
 
-  // Initial render — default to corp
+  // Fire render when accordion is opened
+  const accordion = document.getElementById('da-accordion');
+  if (accordion) {
+    accordion.addEventListener('toggle', () => {
+      if (accordion.open) renderDeckAnalysis(
+        document.querySelector('.da-toggle-btn.active')?.dataset.side || 'corp'
+      );
+    });
+  }
+
+  // Initial render
   renderDeckAnalysis('corp');
 }
 
