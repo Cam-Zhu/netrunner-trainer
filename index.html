@@ -136,9 +136,11 @@
 
   <!-- PAGE: MY DECKS -->
   <main id="page-decks" style="display:none;">
+
     <section class="deck-editors">
+      <h2 class="sh-heading" style="margin-bottom:0.75rem;">Your Decklists</h2>
       <details class="deck-editor" id="editor-corp">
-        <summary>Corp deck</summary>
+        <summary><span class="deck-editor-label deck-editor-label--corp">Corp deck</span></summary>
         <div class="editor-inner">
           <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>. Include your identity card for accurate influence analysis.</p>
           <textarea id="corp-input" spellcheck="false"></textarea>
@@ -149,7 +151,7 @@
         </div>
       </details>
       <details class="deck-editor" id="editor-runner">
-        <summary>Runner deck</summary>
+        <summary><span class="deck-editor-label deck-editor-label--runner">Runner deck</span></summary>
         <div class="editor-inner">
           <p class="editor-hint">One card per line. Supports <code>3x Card Name</code> or <code>Card Name x3</code> or just <code>Card Name</code>. Include your identity card for accurate influence analysis.</p>
           <textarea id="runner-input" spellcheck="false"></textarea>
@@ -161,13 +163,14 @@
       </details>
     </section>
 
+    <div class="deck-analysis-sep"></div>
+
     <!-- Deck Analysis Dashboard -->
     <details class="deck-editor da-accordion" id="da-accordion">
       <summary class="da-accordion-summary">Deck Analysis</summary>
       <div class="da-accordion-body">
         <div class="da-header">
           <div>
-            <div class="da-title">Deck Analysis</div>
             <div class="da-subtitle">Figures computed directly from card data — no estimates</div>
           </div>
           <div class="toggle-group">
