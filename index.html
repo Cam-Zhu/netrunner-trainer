@@ -67,7 +67,7 @@
 
     <section class="sh-section">
       <h2 class="sh-heading">What is Android: Netrunner?</h2>
-      <p class="sh-body">Android: Netrunner is an asymmetric two-player card game set in a cyberpunk future. One player is the <strong>Corp</strong>, building remote servers, defending them with ice (think firewalls), and trying to score agendas. The other is the <strong>Runner</strong>, hacking into those servers to steal the agendas. Every decision is a resource calculation: clicks, credits, and cards are finite.</p>
+      <p class="sh-body">Android: Netrunner is an asymmetric two-player card game set in a cyberpunk future. One player is the <strong>Corp</strong>, building remote servers, defending them with ICE (think firewalls), and trying to score agendas. The other is the <strong>Runner</strong>, hacking into those servers to steal the agendas. Every decision is a resource calculation: clicks, credits, and cards are finite.</p>
       <p class="sh-body">The game is now published by <strong>Null Signal Games</strong>, a non-profit fan organisation that has continued developing new cards and running organised play since Fantasy Flight Games discontinued the game in 2018.</p>
       <div class="sh-links">
         <a class="sh-link" href="https://nullsignal.games" target="_blank" rel="noopener">
@@ -162,21 +162,66 @@
     </section>
 
     <!-- Deck Analysis Dashboard -->
-    <section class="da-section">
-      <div class="da-header">
-        <div>
-          <div class="da-title">Deck Analysis</div>
-          <div class="da-subtitle">Figures computed directly from card data — no estimates</div>
+    <details class="deck-editor da-accordion" id="da-accordion">
+      <summary class="da-accordion-summary">Deck Analysis</summary>
+      <div class="da-accordion-body">
+        <div class="da-header">
+          <div>
+            <div class="da-title">Deck Analysis</div>
+            <div class="da-subtitle">Figures computed directly from card data — no estimates</div>
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn da-toggle-btn active" data-side="corp">Corp</button>
+            <button class="toggle-btn da-toggle-btn" data-side="runner">Runner</button>
+          </div>
         </div>
-        <div class="toggle-group">
-          <button class="toggle-btn da-toggle-btn active" data-side="corp">Corp</button>
-          <button class="toggle-btn da-toggle-btn" data-side="runner">Runner</button>
+        <div id="da-root">
+          <div class="da-empty">Save a deck above to see analysis.</div>
         </div>
       </div>
-      <div id="da-root">
-        <div class="da-empty">Save a deck above to see analysis.</div>
+    </details>
+
+    <details class="deck-editor da-accordion" id="da-explainer-accordion">
+      <summary class="da-accordion-summary">Deck Analysis Explainer</summary>
+      <div class="da-accordion-body da-explainer">
+
+        <div class="da-explainer-section">
+          <div class="da-explainer-title">Identity Bar</div>
+          <p class="da-explainer-body">The coloured bar at the top shows your identity card, which defines your faction, your influence limit, and any special ability that applies for the whole game. The colour is unique to each faction. If you see a prompt to include your identity, paste the full NetrunnerDB export (including the identity line at the top) and save again.</p>
+        </div>
+
+        <div class="da-explainer-section">
+          <div class="da-explainer-title">ICE Composition (Corp)</div>
+          <p class="da-explainer-body">Shows how your ICE is distributed across the three main subtypes: Barrier (broken by Fracters), Code Gate (broken by Decoders), and Sentry (broken by Killers). A healthy ICE suite typically has a mix of all three. A deck with only Barriers is vulnerable to a Runner with a single efficient Fracter. "Other" covers ICE that doesn't fit a standard subtype.</p>
+        </div>
+
+        <div class="da-explainer-section">
+          <div class="da-explainer-title">Agenda Density (Corp)</div>
+          <p class="da-explainer-body">Shows your agendas, their advancement requirements, and two probability figures. "2+ agendas in 5-card HQ" tells you how likely the Runner is to see multiple agendas if they run HQ on turn one. Above 50% starts to feel uncomfortable. "Runner wins from 18 R&D accesses" is a benchmark figure used in the community to compare agenda suites. It estimates how resilient your suite is to a Runner who just hammers R&D all game. Lower is better for the Corp.</p>
+        </div>
+
+        <div class="da-explainer-section">
+          <div class="da-explainer-title">Breaker Coverage (Runner)</div>
+          <p class="da-explainer-body">Shows whether your deck has an answer for each ICE subtype. Barrier, Code Gate, and Sentry each need at least one breaker. If a row shows ⚠ None, you have no dedicated answer for that ICE type and will need to rely on AI breakers or find another way through (bypass effects, derez, etc.). AI breakers are shown separately as they cover all subtypes but are often less efficient.</p>
+        </div>
+
+        <div class="da-explainer-section">
+          <div class="da-explainer-title">Full Memory Usage (Runner)</div>
+          <p class="da-explainer-body">Runners start with 4 memory units (MU). Every program you install uses some of that memory. This panel shows how much MU your full rig would require if every unique program was installed simultaneously. If the total exceeds 4MU you will need hardware or other cards that provide extra memory, otherwise you won't be able to have everything installed at once. Note: this assumes one copy of each program, since you would rarely install duplicates.</p>
+        </div>
+
+        <div class="da-explainer-section">
+          <div class="da-explainer-title">Install Curve</div>
+          <p class="da-explainer-body">A histogram of the install costs across all installable cards in your deck (ICE, assets, programs, hardware, resources, upgrades). The average cost is shown above. A curve that peaks at 0 to 2 credits suggests a fast, aggressive deck. A curve that peaks at 4 to 6 credits suggests a slower, more powerful late-game deck that needs time to set up. Neither is inherently better as it depends on your strategy.</p>
+        </div>
+
+        <div class="da-explainer-section">
+          <div class="da-explainer-title">Influence</div>
+          <p class="da-explainer-body">Each identity has an influence limit (usually 15). Cards from other factions cost influence to include, equal to the number of pips on the card. This panel shows only the cards that are actually spending influence (i.e. cards whose faction differs from your identity's faction). The bar at the top fills towards your limit. If it turns red, your deck is over the legal limit and needs adjusting.</p>
+        </div>
+
       </div>
-    </section>
+    </details>
 
   </main>
 
