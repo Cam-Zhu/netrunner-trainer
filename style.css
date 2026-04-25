@@ -240,7 +240,14 @@ input[type=range]::-webkit-slider-thumb {
   padding: 10px 12px; line-height: 1.6; outline: none;
 }
 .deck-editor textarea:focus { border-color: var(--border-hi); }
-.editor-footer { display: flex; align-items: center; justify-content: space-between; }
+.deck-editor-label { font-weight: 600; }
+.deck-editor-label--corp   { color: var(--corp); }
+.deck-editor-label--runner { color: var(--runner); }
+
+.deck-analysis-sep {
+  border-top: 1px solid var(--border);
+  margin: 1.25rem 0 0.25rem;
+}
 .editor-status { font-size: 0.72rem; font-family: var(--font-mono); color: var(--accent-dim); }
 
 /* page nav */
