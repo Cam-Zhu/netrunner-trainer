@@ -1404,6 +1404,7 @@ kbd {
   height: 100%; background: var(--runner); border-radius: 2px;
   transition: width 0.4s ease;
 }
+.da-inf-total-fill.da-bar--over { background: var(--danger); }
 .da-inf-grid { display: flex; flex-direction: column; gap: 5px; }
 .da-inf-row { display: flex; align-items: center; gap: 8px; }
 .da-inf-name { font-size: 0.72rem; color: var(--text); flex: 1; min-width: 0;
