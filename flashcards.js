@@ -439,16 +439,15 @@ function fcReveal() {
   fcEls.actionsFront.style.display = 'none';
   fcEls.actionsBack.style.display  = '';
 
-  // After render, scroll rating buttons into view if they're below the fold
-  setTimeout(() => {
+  const name = fc.currentCard;
+  const data = typeof CARD_DATA !== 'undefined' ? CARD_DATA[name] : null;
+
+  function scrollToButtons() {
     const rect = fcEls.actionsBack.getBoundingClientRect();
     if (rect.bottom > window.innerHeight) {
       fcEls.actionsBack.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  }, 50);
-
-  const name = fc.currentCard;
-  const data = typeof CARD_DATA !== 'undefined' ? CARD_DATA[name] : null;
+  }
 
   if (fc.mode === 'name') {
     fcEls.frontName.style.display = 'none';
@@ -458,11 +457,15 @@ function fcReveal() {
     if (imgUrl) {
       fcEls.fullArt.src = imgUrl.replace('/small/', '/large/');
       fcEls.fullArt.alt = name;
+      // Wait for image to load before scrolling so height is known
+      fcEls.fullArt.onload  = scrollToButtons;
+      fcEls.fullArt.onerror = scrollToButtons; // scroll anyway if image fails
     } else {
       fcEls.fullArt.src = '';
+      setTimeout(scrollToButtons, 50);
     }
   } else {
-    // Art-first: normal text back
+    // Art-first: normal text back — no image loading delay
     fcEls.front.style.display = 'none';
     fcEls.back.style.display  = 'block';
     fcEls.backImage.style.display = 'none';
@@ -475,6 +478,7 @@ function fcReveal() {
     } else {
       fcEls.oracle.textContent = 'No card data available. Run the fetch script to generate card-data.js.';
     }
+    setTimeout(scrollToButtons, 50);
   }
 }
 
