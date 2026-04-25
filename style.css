@@ -1205,6 +1205,43 @@ kbd {
 
 .da-section { margin-top: 2rem; }
 
+.da-accordion {
+  margin-top: 1rem; border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.da-accordion-summary {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 16px;
+  font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700;
+  color: var(--accent); cursor: pointer;
+  list-style: none; user-select: none;
+  background: var(--bg-card);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  transition: background 0.15s;
+}
+.da-accordion-summary::-webkit-details-marker { display: none; }
+.da-accordion-summary::after {
+  content: '+'; font-size: 1rem; color: var(--accent-dim); flex-shrink: 0;
+}
+.da-accordion[open] > .da-accordion-summary::after { content: '−'; color: var(--accent); }
+.da-accordion-summary:hover { background: var(--bg-raised); }
+.da-accordion[open] > .da-accordion-summary { border-bottom: 1px solid var(--border); }
+.da-accordion-body { padding: 16px; background: var(--bg); }
+
+/* Explainer */
+.da-explainer { display: flex; flex-direction: column; gap: 16px; }
+.da-explainer-section {
+  border-left: 2px solid var(--accent-dim); padding-left: 12px;
+}
+.da-explainer-title {
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+  color: var(--text); text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.da-explainer-body {
+  font-size: 0.78rem; color: var(--text-dim); line-height: 1.6; margin: 0;
+}
+
 .da-header {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 1rem;
@@ -1250,7 +1287,44 @@ kbd {
   color: var(--text-mute);
 }
 
-/* Breaker coverage */
+/* Identity bar */
+.da-id-bar {
+  display: flex; align-items: stretch;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  margin-bottom: 12px;
+}
+.da-id-bar--empty {
+  display: block; padding: 10px 14px;
+  font-size: 0.72rem; font-family: var(--font-mono);
+  color: var(--text-mute);
+}
+.da-id-accent {
+  width: 4px; flex-shrink: 0;
+  background: var(--id-color, var(--accent));
+}
+.da-id-body {
+  padding: 10px 14px; flex: 1;
+}
+.da-id-top {
+  display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px;
+}
+.da-id-name {
+  font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
+  color: var(--id-color, var(--text));
+}
+.da-id-faction {
+  font-size: 0.65rem; font-family: var(--font-mono);
+  color: var(--id-color, var(--text-dim));
+  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.8;
+}
+.da-id-text {
+  font-size: 0.75rem; color: var(--text-dim); line-height: 1.5;
+}
+.da-id-extras {
+  font-size: 0.65rem; font-family: var(--font-mono);
+  color: var(--text-mute); margin-top: 4px;
+}
 .da-breaker-grid { display: flex; flex-direction: column; gap: 6px; }
 .da-breaker-row {
   display: flex; align-items: center; gap: 8px;
@@ -1295,6 +1369,7 @@ kbd {
   background: var(--accent); transition: width 0.4s ease;
 }
 .da-bar--inf { background: var(--runner); }
+.da-bar--mu  { background: var(--accent-dim); }
 .da-bar--over { background: var(--danger); }
 
 /* Agenda density */
