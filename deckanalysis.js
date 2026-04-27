@@ -434,13 +434,28 @@ function initDeckAnalysis() {
     });
   });
 
-  // Fire render when accordion is opened
+  // Fire render and Plausible event when analysis accordion is opened
   const accordion = document.getElementById('da-accordion');
   if (accordion) {
     accordion.addEventListener('toggle', () => {
-      if (accordion.open) renderDeckAnalysis(
-        document.querySelector('.da-toggle-btn.active')?.dataset.side || 'corp'
-      );
+      if (accordion.open) {
+        renderDeckAnalysis(
+          document.querySelector('.da-toggle-btn.active')?.dataset.side || 'corp'
+        );
+        if (typeof window.plausible !== 'undefined') {
+          window.plausible('Deck Analysis opened');
+        }
+      }
+    });
+  }
+
+  // Plausible event when explainer accordion is opened
+  const explainer = document.getElementById('da-explainer-accordion');
+  if (explainer) {
+    explainer.addEventListener('toggle', () => {
+      if (explainer.open && typeof window.plausible !== 'undefined') {
+        window.plausible('Deck Analysis Explainer opened');
+      }
     });
   }
 
