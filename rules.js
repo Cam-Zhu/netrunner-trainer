@@ -27,6 +27,8 @@ function initRules() {
       // Learning needs explicit block not empty string
       const learningEl = document.getElementById('rules-learning');
       if (learningEl) learningEl.style.display = view === 'learning' ? 'block' : 'none';
+      const trackerEl = document.getElementById('lrn-tracker');
+      if (trackerEl) trackerEl.style.display = view === 'learning' ? 'block' : 'none';
 
       document.getElementById('rules-hint').textContent =
         view === 'run' ? 'Tap YES or NO at each decision point to follow the run.' : '';
