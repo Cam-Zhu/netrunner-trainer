@@ -445,6 +445,7 @@
       <div class="toggle-group" id="rules-toggle">
         <button class="toggle-btn active" data-view="turn">Turn structure</button>
         <button class="toggle-btn" data-view="run">Run structure</button>
+        <button class="toggle-btn" data-view="learning">Learning Puzzles</button>
       </div>
       <span class="rules-hint" id="rules-hint"></span>
     </section>
@@ -567,6 +568,11 @@
       </div>
 
       <p class="rules-note">Remember: checkpoints occur at the end of each instruction.</p>
+    </section>
+
+    <!-- Learning view -->
+    <section id="rules-learning" class="rules-view" style="display:none;">
+      <!-- populated by learning.js -->
     </section>
 
   </main>
@@ -746,9 +752,8 @@
       </section>
     </div>
 
-  </main>
-
   <script src="mechanics.js"></script>
+  <script src="learning.js"></script>
   <script src="rules.js"></script>
 </body>
 </html>
