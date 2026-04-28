@@ -10,18 +10,23 @@ function switchPage(page) {
   document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
   if (tabEl) tabEl.classList.add('active');
 
-  document.getElementById('page-start').style.display      = page === 'start'      ? '' : 'none';
-  document.getElementById('page-decks').style.display      = page === 'decks'      ? '' : 'none';
-  document.getElementById('page-flashcards').style.display = page === 'flashcards' ? '' : 'none';
-  document.getElementById('page-challenge').style.display  = page === 'challenge'  ? '' : 'none';
-  document.getElementById('page-rules').style.display      = page === 'rules'      ? '' : 'none';
-  document.getElementById('page-mechanics').style.display  = page === 'mechanics'  ? '' : 'none';
+  const show = (id, visible) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = visible ? '' : 'none';
+  };
+
+  show('page-start',      page === 'start');
+  show('page-decks',      page === 'decks');
+  show('page-flashcards', page === 'flashcards');
+  show('page-challenge',  page === 'challenge');
+  show('page-rules',      page === 'rules');
+  show('page-mechanics',  page === 'mechanics');
 
   if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
   if (page === 'challenge') ch.renderLevelMap();
-  if (page === 'mechanics') window.initMechanicsOnce();
-  if (page === 'rules') window.initRulesOnce();
-  if (page === 'start') window.initSkillTreeOnce();
+  if (page === 'mechanics' && window.initMechanicsOnce) window.initMechanicsOnce();
+  if (page === 'rules'     && window.initRulesOnce)     window.initRulesOnce();
+  if (page === 'start'     && window.initSkillTreeOnce) window.initSkillTreeOnce();
   if (page === 'decks') initDeckAnalysis();
 
   // Update URL hash so the link is bookmarkable / shareable
