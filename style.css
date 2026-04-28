@@ -1562,6 +1562,43 @@ kbd {
   .lrn-columns { grid-template-columns: 1fr; }
 }
 
+
+/* Puzzle tracker */
+.lrn-tracker-wrap {
+  margin-top: 1.5rem; padding: 12px 14px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.lrn-tracker-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.lrn-tracker-title {
+  font-size: 0.68rem; font-family: var(--font-mono); font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em;
+}
+.lrn-tracker-complete {
+  font-size: 0.68rem; font-family: var(--font-mono);
+  color: var(--accent);
+}
+.lrn-tracker-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+.lrn-tracker-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.74rem; color: var(--text-mute);
+  transition: color 0.2s;
+}
+.lrn-tracker-item--done { color: var(--text); }
+.lrn-tracker-pip {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1px solid var(--border-hi); background: var(--bg);
+  flex-shrink: 0; transition: background 0.2s, border-color 0.2s;
+}
+.lrn-tracker-item--done .lrn-tracker-pip {
+  background: var(--accent); border-color: var(--accent);
+}
+
 /* responsive */
 @media (max-width: 600px) {
   header { padding: 1rem; flex-direction: column; gap: 4px; }
