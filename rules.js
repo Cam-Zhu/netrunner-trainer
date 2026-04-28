@@ -15,11 +15,23 @@ function initRules() {
         .forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const view = btn.dataset.view;
-      document.getElementById('rules-turn').style.display = view === 'turn' ? '' : 'none';
-      document.getElementById('rules-run').style.display  = view === 'run'  ? '' : 'none';
-      document.getElementById('rules-hint').textContent   =
+
+      const showEl = (id, visible) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = visible ? '' : 'none';
+      };
+
+      showEl('rules-turn',     view === 'turn');
+      showEl('rules-run',      view === 'run');
+
+      // Learning needs explicit block not empty string
+      const learningEl = document.getElementById('rules-learning');
+      if (learningEl) learningEl.style.display = view === 'learning' ? 'block' : 'none';
+
+      document.getElementById('rules-hint').textContent =
         view === 'run' ? 'Tap YES or NO at each decision point to follow the run.' : '';
-      if (view === 'run') renderRunFlow(RUN_STATE_START);
+      if (view === 'run')      renderRunFlow(RUN_STATE_START);
+      if (view === 'learning') window.initLearning();
     });
   });
 
