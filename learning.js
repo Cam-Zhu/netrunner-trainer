@@ -210,6 +210,7 @@ function lrnRender() {
         </div>` : ''}
       <div class="lrn-actions">
         <button class="btn btn-primary" id="lrn-next-btn">Try another</button>
+        ${!correct ? '<button class="btn btn-ghost" id="lrn-retry-btn">Retry this puzzle</button>' : ''}
       </div>`;
   }
 
@@ -289,6 +290,16 @@ function lrnRender() {
 
   const nextBtn = document.getElementById('lrn-next-btn');
   if (nextBtn) nextBtn.addEventListener('click', () => lrnStart(lrn.puzzle?.id));
+
+  const retryBtn = document.getElementById('lrn-retry-btn');
+  if (retryBtn) retryBtn.addEventListener('click', () => {
+    const currentId = lrn.puzzle?.id;
+    lrn.puzzle   = PUZZLES.find(p => p.id === currentId);
+    lrn.shuffled = lrnShuffle(lrn.puzzle.steps);
+    lrn.selected = [];
+    lrn.complete = false;
+    lrnRender();
+  });
 }
 
 function lrnStart(excludeId) {
