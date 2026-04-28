@@ -110,6 +110,46 @@ const PUZZLES = [
 
 ];
 
+const STORAGE_KEY_LRN = 'nrtrainer_lrn_completed';
+
+function lrnLoadCompleted() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY_LRN) || '[]'); }
+  catch { return []; }
+}
+
+function lrnSaveCompleted(id) {
+  const completed = lrnLoadCompleted();
+  if (!completed.includes(id)) {
+    completed.push(id);
+    try { localStorage.setItem(STORAGE_KEY_LRN, JSON.stringify(completed)); } catch {}
+  }
+}
+
+function lrnRenderTracker() {
+  const root = document.getElementById('lrn-tracker');
+  if (!root) return;
+  const completed = lrnLoadCompleted();
+  const allDone = PUZZLES.every(p => completed.includes(p.id));
+
+  root.innerHTML = `
+    <div class="lrn-tracker-header">
+      <span class="lrn-tracker-title">Progress</span>
+      ${allDone ? '<span class="lrn-tracker-complete">All puzzles solved ✓</span>' : ''}
+    </div>
+    <div class="lrn-tracker-grid">
+      ${PUZZLES.map(p => {
+        const done = completed.includes(p.id);
+        return `
+          <div class="lrn-tracker-item ${done ? 'lrn-tracker-item--done' : ''}"
+               title="${done ? 'Completed' : 'Not yet completed'}">
+            <span class="lrn-tracker-pip"></span>
+            <span class="lrn-tracker-label">${p.title}</span>
+          </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
 // ─── State ────────────────────────────────────────────────────────────────────
 
 const lrn = {
@@ -235,10 +275,12 @@ function lrnRender() {
     if (submitBtn) submitBtn.addEventListener('click', () => {
       lrn.complete = true;
       const correct = lrn.selected.every((s, i) => s.id === lrn.puzzle.steps[i].id);
+      if (correct) lrnSaveCompleted(lrn.puzzle.id);
       if (typeof window.plausible !== 'undefined') {
         window.plausible('Learning puzzle completed', { props: { puzzle: lrn.puzzle.id, correct: correct ? 'yes' : 'no' } });
       }
       lrnRender();
+      lrnRenderTracker();
     });
 
     const skipBtn = document.getElementById('lrn-skip-btn');
@@ -262,4 +304,5 @@ function lrnStart(excludeId) {
 window.initLearning = function() {
   if (!lrn.puzzle) lrnStart();
   else lrnRender();
+  lrnRenderTracker();
 };
