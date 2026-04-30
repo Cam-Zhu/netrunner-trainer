@@ -55,8 +55,8 @@ const BRANCHES = [
       { id: 't1', text: 'Saved a Corp deck and a Runner deck in My decks',       auto: true },
       { id: 't2', text: 'Completed a Flashcards session in Art first mode',       auto: true },
       { id: 't3', text: 'Completed a Flashcards session in Name first mode',      auto: true },
-      { id: 't4', text: 'Passed Challenge Level 1 (System Gateway)',              auto: true },
-      { id: 't5', text: 'Passed all 6 Challenge levels',                          auto: true },
+      { id: 't4', text: 'System Gateway completely known in Challenge',  auto: true },
+      { id: 't5', text: 'Full Standard pool completely known in Challenge', auto: true },
     ],
   },
 ];
@@ -94,16 +94,23 @@ function detectAutoNodes() {
     detected.t3 = !!(localStorage.getItem('nrtrainer_fc_session_name'));
   } catch { detected.t3 = false; }
 
-  // t4 — passed challenge level 1 (either mode)
+  // t4 — System Gateway level completely known
   try {
-    const ch = JSON.parse(localStorage.getItem('nrtrainer_challenge') || '{}');
-    detected.t4 = !!(ch['1_set'] || ch['1_cum']);
+    const ratings = JSON.parse(localStorage.getItem('nrtrainer_challenge_v2') || '{}');
+    const sgCards = typeof CARD_DATA !== 'undefined'
+      ? Object.entries(CARD_DATA).filter(([,d]) => d.set_id === 'system_gateway').map(([n]) => n)
+      : [];
+    detected.t4 = sgCards.length > 0 && sgCards.every(n => ratings[n] === 'knew');
   } catch { detected.t4 = false; }
 
-  // t5 — passed all 6 challenge levels (at least one mode each)
+  // t5 — all Standard pool cards completely known
   try {
-    const ch = JSON.parse(localStorage.getItem('nrtrainer_challenge') || '{}');
-    detected.t5 = [1,2,3,4,5,6].every(n => ch[`${n}_set`] || ch[`${n}_cum`]);
+    const ratings  = JSON.parse(localStorage.getItem('nrtrainer_challenge_v2') || '{}');
+    const allSets  = new Set(['system_gateway','elevation','vantage_point','downfall','uprising','midnight_sun','parhelion','the_automata_initiative','rebellion_without_rehearsal']);
+    const allCards = typeof CARD_DATA !== 'undefined'
+      ? Object.entries(CARD_DATA).filter(([,d]) => allSets.has(d.set_id)).map(([n]) => n)
+      : [];
+    detected.t5 = allCards.length > 0 && allCards.every(n => ratings[n] === 'knew');
   } catch { detected.t5 = false; }
 
   return detected;
