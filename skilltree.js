@@ -96,7 +96,7 @@ function detectAutoNodes() {
 
   // t4 — System Gateway level completely known
   try {
-    const ratings = JSON.parse(localStorage.getItem('nrtrainer_challenge_v2') || '{}');
+    const ratings = JSON.parse(localStorage.getItem('nrtrainer_card_ratings') || '{}');
     const sgCards = typeof CARD_DATA !== 'undefined'
       ? Object.entries(CARD_DATA).filter(([,d]) => d.set_id === 'system_gateway').map(([n]) => n)
       : [];
@@ -105,7 +105,7 @@ function detectAutoNodes() {
 
   // t5 — all Standard pool cards completely known
   try {
-    const ratings  = JSON.parse(localStorage.getItem('nrtrainer_challenge_v2') || '{}');
+    const ratings  = JSON.parse(localStorage.getItem('nrtrainer_card_ratings') || '{}');
     const allSets  = new Set(['system_gateway','elevation','vantage_point','downfall','uprising','midnight_sun','parhelion','the_automata_initiative','rebellion_without_rehearsal']);
     const allCards = typeof CARD_DATA !== 'undefined'
       ? Object.entries(CARD_DATA).filter(([,d]) => allSets.has(d.set_id)).map(([n]) => n)
