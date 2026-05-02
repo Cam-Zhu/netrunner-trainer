@@ -23,7 +23,14 @@ function switchPage(page) {
   show('page-mechanics',  page === 'mechanics');
 
   if (page === 'flashcards' && !fc.currentCard) fc.drawCard();
-  if (page === 'challenge') ch.renderLevelMap();
+  if (page === 'challenge') {
+    ch.renderLevelMap();
+    if (window.chLaunchCustomPool && typeof window.chStartCustomPool === 'function') {
+      const pool = window.chLaunchCustomPool;
+      window.chLaunchCustomPool = null;
+      window.chStartCustomPool(pool);
+    }
+  }
   if (page === 'mechanics' && window.initMechanicsOnce) window.initMechanicsOnce();
   if (page === 'rules'     && window.initRulesOnce)     window.initRulesOnce();
   if (page === 'start'     && window.initSkillTreeOnce) window.initSkillTreeOnce();
@@ -45,7 +52,45 @@ document.querySelectorAll('.page-tab').forEach(tab => {
 
 // ─── Flashcard state ──────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'nrtrainer_fc_ratings';
+const STORAGE_KEY     = 'nrtrainer_card_ratings';   // shared with Challenge
+const STORAGE_KEY_OLD = 'nrtrainer_fc_ratings';      // legacy — migrated on load
+
+// ─── Ratings ──────────────────────────────────────────────────────────────────
+
+function loadRatings() {
+  try {
+    // Load from new shared key
+    const shared = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+    // Migrate legacy fc ratings if shared store is empty
+    if (!Object.keys(shared).length) {
+      const old = JSON.parse(localStorage.getItem(STORAGE_KEY_OLD) || '{}');
+      const migrated = {};
+      for (const [name, r] of Object.entries(old)) {
+        if (typeof r === 'object') {
+          // Old format: { knew: N, unsure: N, blank: N } — pick dominant
+          const max = Math.max(r.knew || 0, r.unsure || 0, r.blank || 0);
+          if (max > 0) {
+            if ((r.knew || 0) === max) migrated[name] = 'knew';
+            else if ((r.unsure || 0) === max) migrated[name] = 'unsure';
+            else migrated[name] = 'blank';
+          }
+        } else if (typeof r === 'string') {
+          migrated[name] = r;
+        }
+      }
+      if (Object.keys(migrated).length) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated)); } catch {}
+        return migrated;
+      }
+    }
+    return shared;
+  } catch { return {}; }
+}
+
+function saveRatings() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(fc.ratings)); } catch {}
+}
 
 const fc = {
   pool:        'all',    // 'decks' | 'all'
@@ -182,9 +227,9 @@ function buildQueue(pool) {
   const groups = { blank: [], unsure: [], other: [] };
   for (const name of pool) {
     const r = fc.ratings[name];
-    if (r && r.blank > r.knew) groups.blank.push(name);
-    else if (r && r.unsure > r.knew) groups.unsure.push(name);
-    else groups.other.push(name);
+    if (r === 'blank')       groups.blank.push(name);
+    else if (r === 'unsure') groups.unsure.push(name);
+    else                     groups.other.push(name);
   }
   return [...shuffle(groups.other), ...shuffle(groups.unsure), ...shuffle(groups.blank)].reverse();
 }
@@ -493,9 +538,8 @@ function fcRate(result) {
   const name = fc.currentCard;
   if (!name) return;
 
-  // Update persistent ratings
-  if (!fc.ratings[name]) fc.ratings[name] = { knew: 0, unsure: 0, blank: 0 };
-  fc.ratings[name][result]++;
+  // Update persistent ratings — simple string, shared with Challenge
+  fc.ratings[name] = result;
   saveRatings();
 
   // Update session counts
@@ -575,6 +619,22 @@ function updateWeakList(name, result) {
     const r = sessionWeak[n];
     return `<span class="fc-weak-chip ${r}">${escFc(n)}</span>`;
   }).join('');
+
+  // Show/update Challenge weak cards button
+  let challengeBtn = document.getElementById('fc-challenge-weak-btn');
+  if (!challengeBtn) {
+    challengeBtn = document.createElement('button');
+    challengeBtn.id = 'fc-challenge-weak-btn';
+    challengeBtn.className = 'btn btn-ghost btn-sm fc-challenge-weak-btn';
+    challengeBtn.textContent = 'Challenge these cards';
+    fcEls.weakList.parentElement.appendChild(challengeBtn);
+    challengeBtn.addEventListener('click', () => {
+      const pool = Object.keys(sessionWeak);
+      if (!pool.length) return;
+      window.chLaunchCustomPool = pool;
+      switchPage('challenge');
+    });
+  }
 }
 
 // ─── Reset session ────────────────────────────────────────────────────────────
@@ -596,6 +656,8 @@ function fcResetSession() {
   fcEls.weakList.innerHTML = '';
   fcEls.weakCount.textContent = '';
   Object.keys(sessionWeak).forEach(k => delete sessionWeak[k]);
+  const oldBtn = document.getElementById('fc-challenge-weak-btn');
+  if (oldBtn) oldBtn.remove();
   // Restore hint text and face visibility
   const hintEl = fcEls.front.querySelector('.fc-hint');
   if (hintEl) hintEl.innerHTML = 'Think about what this card does, then reveal';
