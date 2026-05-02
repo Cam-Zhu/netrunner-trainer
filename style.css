@@ -394,6 +394,11 @@ input[type=range]::-webkit-slider-thumb {
 }
 .fc-weak-chip.blank  { border-color: #7a2020; color: var(--danger); }
 .fc-weak-chip.unsure { border-color: #7a5200; color: var(--warn); }
+.fc-challenge-weak-btn {
+  margin-top: 8px; font-size: 0.72rem; display: block;
+  border-color: var(--warn); color: var(--warn);
+}
+.fc-challenge-weak-btn:hover { background: var(--warn-bg); }
 
 /* set filter selects */
 .fc-set-group select {
