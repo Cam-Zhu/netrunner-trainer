@@ -45,7 +45,7 @@ const LEVELS = [
   },
 ];
 
-const STORAGE_KEY_CH      = 'nrtrainer_challenge_v2';
+const STORAGE_KEY_CH      = 'nrtrainer_card_ratings';  // shared with Flashcards
 const STORAGE_KEY_CH_MODE = 'nrtrainer_challenge_mode';
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -75,6 +75,13 @@ function buildLevelPool(levelId) {
   return Object.entries(CARD_DATA)
     .filter(([, d]) => sets.has(d.set_id))
     .map(([name]) => name);
+}
+
+function buildStudyPool(levelId) {
+  const full = buildLevelPool(levelId);
+  const hasRatings = full.some(n => ch.ratings[n]);
+  if (!hasRatings) return full;
+  return full.filter(n => ch.ratings[n] !== 'knew');
 }
 
 function buildWeakPool(levelId) {
@@ -173,13 +180,14 @@ chEls.resultNext.addEventListener('click', () => {
 
 chEls.resultRetry.addEventListener('click', () => {
   chEls.result.style.display = 'none';
-  if (ch.active) {
-    const { levelId, reviewOnly } = ch.active;
-    if (reviewOnly && buildWeakPool(levelId).length === 0) {
-      chStartLevel(levelId, false);
-    } else {
-      chStartLevel(levelId, reviewOnly);
-    }
+  if (!ch.active) return;
+  const { levelId, reviewOnly, customPool, pool } = ch.active;
+  if (customPool) {
+    window.chStartCustomPool(pool);
+  } else if (reviewOnly && buildWeakPool(levelId).length === 0) {
+    chStartLevel(levelId, false);
+  } else {
+    chStartLevel(levelId, reviewOnly);
   }
 });
 
@@ -274,7 +282,7 @@ ch.renderLevelMap = function() {
 // ─── Start a level ────────────────────────────────────────────────────────────
 
 function chStartLevel(levelId, reviewOnly) {
-  const pool = reviewOnly ? buildWeakPool(levelId) : buildLevelPool(levelId);
+  const pool = reviewOnly ? buildWeakPool(levelId) : buildStudyPool(levelId);
   if (!pool.length) {
     alert(reviewOnly
       ? 'No weak cards to review for this level.'
@@ -473,42 +481,64 @@ function chShowResult() {
   const a = ch.active;
   if (!a) return;
 
-  const level    = LEVELS.find(l => l.id === a.levelId);
-  const mastered = isMastered(a.levelId);
-  const total    = a.sessionKnew + a.sessionUnsure + a.sessionBlank;
-  const pct      = total > 0 ? Math.round((a.sessionKnew / total) * 100) : 0;
-  const { knew, unsure, blank, total: lvTotal } = levelStats(a.levelId);
+  const total = a.sessionKnew + a.sessionUnsure + a.sessionBlank;
+  const pct   = total > 0 ? Math.round((a.sessionKnew / total) * 100) : 0;
 
   chEls.active.style.display = 'none';
   chEls.result.style.display = '';
 
-  chEls.resultIcon.textContent  = mastered ? '✓' : '●';
-  chEls.resultIcon.style.color  = mastered ? 'var(--accent)' : 'var(--warn)';
-  chEls.resultTitle.textContent = mastered ? 'All cards known!' : 'Session complete';
-  chEls.resultTitle.style.color = mastered ? 'var(--accent)' : 'var(--text)';
+  if (a.customPool) {
+    // Custom pool session from Flashcards
+    const allKnown = a.pool.every(n => ch.ratings[n] === 'knew');
+    chEls.resultIcon.textContent  = allKnown ? '✓' : '●';
+    chEls.resultIcon.style.color  = allKnown ? 'var(--accent)' : 'var(--warn)';
+    chEls.resultTitle.textContent = allKnown ? 'All cards known!' : 'Session complete';
+    chEls.resultTitle.style.color = allKnown ? 'var(--accent)' : 'var(--text)';
+    chEls.resultBody.textContent  =
+      `Flashcard weak cards · ${a.pool.length} cards\n` +
+      `Session: ${a.sessionKnew} knew · ${a.sessionUnsure} unsure · ${a.sessionBlank} blank (${pct}%)`;
+    chEls.resultNext.textContent = 'Back to map';
+    chEls.resultNext.onclick = () => {
+      chEls.result.style.display   = 'none';
+      chEls.levelMap.style.display = '';
+      ch.active = null;
+      ch.renderLevelMap();
+    };
+    chEls.resultRetry.textContent = 'Challenge again';
+    if (typeof window.plausible !== 'undefined') {
+      window.plausible('Challenge session complete', {
+        props: { level: 'custom', mastered: allKnown ? 'yes' : 'no' }
+      });
+    }
+  } else {
+    // Normal level session
+    const level    = LEVELS.find(l => l.id === a.levelId);
+    const mastered = isMastered(a.levelId);
+    const { knew, unsure, blank, total: lvTotal } = levelStats(a.levelId);
 
-  chEls.resultBody.textContent =
-    `${level.name}\n` +
-    `Session: ${a.sessionKnew} knew · ${a.sessionUnsure} unsure · ${a.sessionBlank} blank (${pct}%)\n` +
-    `Overall: ${knew}/${lvTotal} known · ${unsure} unsure · ${blank} blank`;
-
-  chEls.resultNext.textContent = 'Back to map';
-  chEls.resultNext.onclick = () => {
-    chEls.result.style.display   = 'none';
-    chEls.levelMap.style.display = '';
-    ch.active = null;
+    chEls.resultIcon.textContent  = mastered ? '✓' : '●';
+    chEls.resultIcon.style.color  = mastered ? 'var(--accent)' : 'var(--warn)';
+    chEls.resultTitle.textContent = mastered ? 'All cards known!' : 'Session complete';
+    chEls.resultTitle.style.color = mastered ? 'var(--accent)' : 'var(--text)';
+    chEls.resultBody.textContent  =
+      `${level.name}\n` +
+      `Session: ${a.sessionKnew} knew · ${a.sessionUnsure} unsure · ${a.sessionBlank} blank (${pct}%)\n` +
+      `Overall: ${knew}/${lvTotal} known · ${unsure} unsure · ${blank} blank`;
+    chEls.resultNext.textContent = 'Back to map';
+    chEls.resultNext.onclick = () => {
+      chEls.result.style.display   = 'none';
+      chEls.levelMap.style.display = '';
+      ch.active = null;
+      ch.renderLevelMap();
+    };
+    chEls.resultRetry.textContent = a.reviewOnly ? 'Review again' : 'Study again';
+    if (typeof window.plausible !== 'undefined') {
+      window.plausible('Challenge session complete', {
+        props: { level: String(a.levelId), mastered: mastered ? 'yes' : 'no' }
+      });
+    }
     ch.renderLevelMap();
-  };
-
-  chEls.resultRetry.textContent = a.reviewOnly ? 'Review again' : 'Study again';
-
-  if (typeof window.plausible !== 'undefined') {
-    window.plausible('Challenge session complete', {
-      props: { level: String(a.levelId), mastered: mastered ? 'yes' : 'no' }
-    });
   }
-
-  ch.renderLevelMap();
 }
 
 // ─── Coach (temporarily disabled) ────────────────────────────────────────────
@@ -535,6 +565,42 @@ function escCh(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// ─── Custom pool session (from Flashcards weak list) ─────────────────────────
+
+window.chStartCustomPool = function(pool) {
+  if (!pool || !pool.length) return;
+
+  ch.active = {
+    levelId:       null,
+    reviewOnly:    false,
+    customPool:    true,
+    pool,
+    queue:         buildQueue(pool),
+    currentCard:   null,
+    isFlipped:     false,
+    seen:          new Set(),
+    sessionKnew:   0,
+    sessionUnsure: 0,
+    sessionBlank:  0,
+  };
+
+  chEls.activeTitle.textContent = 'Flashcard Weak Cards';
+  chEls.activeSub.textContent   = `Challenge session · ${pool.length} cards`;
+
+  chEls.levelMap.style.display = 'none';
+  chEls.result.style.display   = 'none';
+  chEls.active.style.display   = '';
+
+  chDraw();
+};
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 ch.renderLevelMap();
+
+// Handle cross-tab launch from Flashcards weak list
+if (window.chLaunchCustomPool) {
+  const pool = window.chLaunchCustomPool;
+  window.chLaunchCustomPool = null;
+  window.chStartCustomPool(pool);
+}
