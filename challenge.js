@@ -81,7 +81,9 @@ function buildStudyPool(levelId) {
   const full = buildLevelPool(levelId);
   const hasRatings = full.some(n => ch.ratings[n]);
   if (!hasRatings) return full;
-  return full.filter(n => ch.ratings[n] !== 'knew');
+  const filtered = full.filter(n => ch.ratings[n] !== 'knew');
+  // If everything is known, return the full pool for a refresher session
+  return filtered.length ? filtered : full;
 }
 
 function buildWeakPool(levelId) {
