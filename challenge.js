@@ -331,7 +331,12 @@ function chDraw() {
     return;
   }
 
-  if (!a.queue.length) a.queue = buildQueue(a.pool);
+  if (!a.queue.length) {
+    // Refill with only unseen or non-knew cards
+    const remaining = a.pool.filter(n => !a.seen.has(n) || ch.ratings[n] !== 'knew');
+    if (remaining.length) a.queue = buildQueue(remaining);
+    else { chShowResult(); return; }
+  }
 
   let name = a.queue.pop();
   if (name === a.currentCard && a.queue.length) {
@@ -444,16 +449,7 @@ function chRate(result) {
   chUpdateProgress();
 
   if (a.seen.size >= a.pool.length) {
-    const stillWeak = a.pool.filter(n => {
-      const r = ch.ratings[n];
-      return r === 'unsure' || r === 'blank';
-    });
-    if (stillWeak.length > 0 && !a.reviewOnly) {
-      a.queue = buildQueue(stillWeak);
-      chDraw();
-    } else {
-      chShowResult();
-    }
+    chShowResult();
   } else {
     chDraw();
   }
