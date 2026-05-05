@@ -172,3 +172,63 @@ function saveDeck(side) {
     window.plausible('Deck saved', { props: { side } });
   }
 }
+
+// ─── PWA: Service worker registration + install nudge ─────────────────────────
+
+(function() {
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+
+  const NUDGE_KEY = 'nrtrainer_pwa_dismissed';
+  let deferredPrompt = null;
+
+  // Capture Android/Chrome install prompt
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showNudge('android');
+  });
+
+  function showNudge(platform) {
+    if (localStorage.getItem(NUDGE_KEY)) return;
+    const nudge      = document.getElementById('pwa-nudge');
+    const installBtn = document.getElementById('pwa-install-btn');
+    const dismissBtn = document.getElementById('pwa-dismiss-btn');
+    const textEl     = document.getElementById('pwa-nudge-text');
+    if (!nudge) return;
+
+    if (platform === 'android') {
+      installBtn.style.display = '';
+      textEl.textContent = 'Install Runner\'s Toolkit to your home screen for quick access.';
+      installBtn.addEventListener('click', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; nudge.style.display = 'none'; });
+      });
+    } else {
+      // iOS — no programmatic install, show instructions
+      textEl.textContent = 'To install: tap the Share button in Safari, then "Add to Home Screen".';
+    }
+
+    dismissBtn.addEventListener('click', () => {
+      nudge.style.display = 'none';
+      try { localStorage.setItem(NUDGE_KEY, '1'); } catch {}
+    });
+
+    nudge.style.display = '';
+  }
+
+  // Detect iOS Safari (not already installed)
+  function isIosSafari() {
+    const ua = navigator.userAgent;
+    return /iP(hone|od|ad)/.test(ua) &&
+           /WebKit/.test(ua) &&
+           !/(CriOS|FxiOS|OPiOS|mercury)/.test(ua) &&
+           !window.navigator.standalone;
+  }
+
+  if (isIosSafari()) showNudge('ios');
+})();
