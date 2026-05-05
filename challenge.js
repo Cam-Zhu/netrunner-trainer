@@ -78,17 +78,13 @@ return Object.entries(CARD_DATA)
 }
 
 function buildStudyPool(levelId) {
-const full = buildLevelPool(levelId);
-const hasRatings = full.some(n => ch.ratings[n]);
-if (!hasRatings) return full;
-const filtered = full.filter(n => ch.ratings[n] !== ‘knew’);
-// If everything is known, return the full pool for a refresher session
-return filtered.length ? filtered : full;
+// Study: unseen + unsure + blank only — never knew
+return buildLevelPool(levelId).filter(n => ch.ratings[n] !== ‘knew’);
 }
 
 function buildWeakPool(levelId) {
-return buildLevelPool(levelId).filter(name => {
-const r = ch.ratings[name];
+return buildLevelPool(levelId).filter(n => {
+const r = ch.ratings[n];
 return r === ‘unsure’ || r === ‘blank’;
 });
 }
@@ -103,12 +99,12 @@ return a;
 }
 
 function buildQueue(pool) {
-// Strict order: unseen/unrated first, then unsure, then blank
-// Each group is shuffled randomly within itself
+// Strict order: unseen first, then unsure, then blank
+// Each group shuffled randomly within itself
+// Queue is popped from end so unseen comes out first
 const unseen = pool.filter(n => !ch.ratings[n]);
 const unsure = pool.filter(n => ch.ratings[n] === ‘unsure’);
 const blank  = pool.filter(n => ch.ratings[n] === ‘blank’);
-// Queue is popped from the end, so build in reverse order
 return […shuffle(blank), …shuffle(unsure), …shuffle(unseen)];
 }
 
@@ -188,13 +184,13 @@ ch.renderLevelMap();
 chEls.resultRetry.addEventListener(‘click’, () => {
 chEls.result.style.display = ‘none’;
 if (!ch.active) return;
-const { levelId, reviewOnly, customPool, pool } = ch.active;
+const { levelId, mode, customPool, pool } = ch.active;
 if (customPool) {
 window.chStartCustomPool(pool);
-} else if (reviewOnly && buildWeakPool(levelId).length === 0) {
-chStartLevel(levelId, false);
+} else if (mode === ‘weak’ && buildWeakPool(levelId).length === 0) {
+chStartLevel(levelId, ‘study’);
 } else {
-chStartLevel(levelId, reviewOnly);
+chStartLevel(levelId, mode);
 }
 });
 
@@ -259,21 +255,33 @@ card.innerHTML = `
     </div>
   </div>
   <div class="ch-level-actions">
-    <button class="btn btn-primary btn-sm ch-study-btn" data-level="${level.id}">Study</button>
-    ${hasWeak ? `<button class="btn btn-ghost btn-sm ch-review-btn" data-level="${level.id}">Review weak</button>` : ''}
+    ${!mastered ? `<button class="btn btn-primary btn-sm ch-study-btn" data-level="${level.id}">Study</button>` : ''}
+    ${mastered  ? `<button class="btn btn-primary btn-sm ch-studyall-btn" data-level="${level.id}">Study all</button>` : ''}
+    ${hasWeak   ? `<button class="btn btn-ghost btn-sm ch-review-btn" data-level="${level.id}">Review weak</button>` : ''}
   </div>
 `;
 
-card.querySelector('.ch-study-btn').addEventListener('click', e => {
-  e.stopPropagation();
-  chStartLevel(level.id, false);
-});
+const studyBtn = card.querySelector('.ch-study-btn');
+if (studyBtn) {
+  studyBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    chStartLevel(level.id, 'study');
+  });
+}
+
+const studyAllBtn = card.querySelector('.ch-studyall-btn');
+if (studyAllBtn) {
+  studyAllBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    chStartLevel(level.id, 'all');
+  });
+}
 
 const reviewBtn = card.querySelector('.ch-review-btn');
 if (reviewBtn) {
   reviewBtn.addEventListener('click', e => {
     e.stopPropagation();
-    chStartLevel(level.id, true);
+    chStartLevel(level.id, 'weak');
   });
 }
 
@@ -285,22 +293,37 @@ chEls.levelMap.appendChild(card);
 
 // ─── Start a level ────────────────────────────────────────────────────────────
 
-function chStartLevel(levelId, reviewOnly) {
-const pool = reviewOnly ? buildWeakPool(levelId) : buildStudyPool(levelId);
+function chStartLevel(levelId, mode) {
+const pool =
+mode === ‘weak’ ? buildWeakPool(levelId) :
+mode === ‘all’  ? buildLevelPool(levelId) :
+buildStudyPool(levelId);
+
 if (!pool.length) {
-alert(reviewOnly
+if (mode === ‘study’) {
+// All cards known — shouldn’t happen as Study is hidden when mastered
+// but handle gracefully
+chStartLevel(levelId, ‘all’);
+return;
+}
+alert(mode === ‘weak’
 ? ‘No weak cards to review for this level.’
 : ‘No cards found. Make sure card-data.js is up to date.’);
 return;
 }
 
 const level = LEVELS.find(l => l.id === levelId);
+const label = mode === ‘weak’ ? ‘Review weak cards’ :
+mode === ‘all’  ? ‘Study all cards’ :
+‘Study’;
 
 ch.active = {
 levelId,
-reviewOnly,
+mode,
+reviewOnly: mode === ‘weak’,
+customPool: false,
 pool,
-queue:         buildQueue(pool),
+queue:         buildQueue(mode === ‘all’ ? pool : pool),
 currentCard:   null,
 isFlipped:     false,
 seen:          new Set(),
@@ -309,7 +332,6 @@ sessionUnsure: 0,
 sessionBlank:  0,
 };
 
-const label = reviewOnly ? ‘Review weak cards’ : ‘Study all cards’;
 chEls.activeTitle.textContent = `Level ${levelId}: ${level.name}`;
 chEls.activeSub.textContent   = `${label} · ${pool.length} cards`;
 
@@ -533,7 +555,10 @@ chEls.resultNext.onclick = () => {
   ch.active = null;
   ch.renderLevelMap();
 };
-chEls.resultRetry.textContent = a.reviewOnly ? 'Review again' : 'Study again';
+chEls.resultRetry.textContent =
+  a.mode === 'weak' ? 'Review again' :
+  a.mode === 'all'  ? 'Study all again' :
+                      'Study again';
 if (typeof window.plausible !== 'undefined') {
   window.plausible('Challenge session complete', {
     props: { level: String(a.levelId), mastered: mastered ? 'yes' : 'no' }
