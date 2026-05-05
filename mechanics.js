@@ -1161,8 +1161,10 @@ function initMechanics() {
         .forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       const view = btn.dataset.view;
-      document.getElementById("mech-glossary-view").style.display = view === "glossary" ? "" : "none";
-      document.getElementById("mech-formats-view").style.display  = view === "formats"  ? "" : "none";
+      document.getElementById("mech-glossary-view").style.display    = view === "glossary"    ? "" : "none";
+      document.getElementById("mech-formats-view").style.display     = view === "formats"     ? "" : "none";
+      document.getElementById("mech-cardbrowser-view").style.display = view === "cardbrowser" ? "" : "none";
+      if (view === "cardbrowser" && window.initCardBrowser) window.initCardBrowser();
     });
   });
 
