@@ -587,6 +587,7 @@
       <div class="toggle-group" id="mech-view-toggle">
         <button class="toggle-btn active" data-view="glossary">Glossary</button>
         <button class="toggle-btn" data-view="formats">Formats</button>
+        <button class="toggle-btn" data-view="cardbrowser">Card Browser</button>
       </div>
     </section>
 
@@ -755,7 +756,20 @@
       </section>
     </div>
 
+    <!-- Card Browser view -->
+    <div id="mech-cardbrowser-view" style="display:none;">
+      <section class="controls-bar cb-controls">
+        <select id="cb-faction-select" class="cb-select"></select>
+        <select id="cb-type-select"    class="cb-select"></select>
+        <select id="cb-set-select"     class="cb-select"></select>
+        <button class="btn btn-ghost btn-sm" id="cb-reset-btn">Reset</button>
+        <span class="cb-count" id="cb-count"></span>
+      </section>
+      <div id="cb-grid" class="cb-grid"></div>
+    </div>
+
   <script src="mechanics.js"></script>
+  <script src="cardbrowser.js"></script>
   <script src="learning.js"></script>
   <script src="rules.js"></script>
 </body>
