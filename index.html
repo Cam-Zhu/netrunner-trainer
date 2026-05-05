@@ -26,6 +26,11 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Runner's Toolkit">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -133,9 +138,18 @@
       <p class="sh-body" style="margin-top:0.5rem;">If you find this useful, <a class="sh-inline-link" href="https://ko-fi.com/runnerstoolkit" target="_blank" rel="noopener">a tip is always appreciated</a>.</p>
     </section>
 
-  </main>
+    <!-- PWA install nudge -->
+    <div id="pwa-nudge" class="pwa-nudge" style="display:none;">
+      <div class="pwa-nudge-body">
+        <span class="pwa-nudge-text" id="pwa-nudge-text">Install Runner's Toolkit to your home screen for quick access.</span>
+        <div class="pwa-nudge-actions">
+          <button class="btn btn-primary btn-sm" id="pwa-install-btn" style="display:none;">Install</button>
+          <button class="btn btn-ghost btn-sm" id="pwa-dismiss-btn">Dismiss</button>
+        </div>
+      </div>
+    </div>
 
-  <!-- PAGE: MY DECKS -->
+  </main>
   <main id="page-decks" style="display:none;">
 
     <section class="deck-editors">
