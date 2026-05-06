@@ -294,6 +294,9 @@ chEls.levelMap.appendChild(card);
 // ─── Start a level ────────────────────────────────────────────────────────────
 
 function chStartLevel(levelId, mode) {
+// Reload ratings fresh in case Flashcards wrote new ratings this session
+ch.ratings = loadRatings();
+
 const pool =
 mode === ‘weak’ ? buildWeakPool(levelId) :
 mode === ‘all’  ? buildLevelPool(levelId) :
